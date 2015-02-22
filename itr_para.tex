@@ -1,0 +1,19 @@
+\subsection{Iterative Sampling}
+Although we can directly apply slice sampling on a large number of bigrams, we find that gradually including less frequent bigrams into a sampling process saves deciphering time -- we call this iterative sampling:
+
+ \begin{itemize}
+  \item Break the ciphertext into bigrams and collect their counts
+  \item Keep bigrams whose counts are greater than a threshold $\alpha$. Then initialize the first sample randomly and use slice sampling to perform maximum likelihood training. In the end, extract a translation table T according to the final sample.
+  \item Lower the threshold $\alpha$ to include more bigrams into the sampling process. Initialize the first sample using the translation table obtained from the previous sampling run (for each cipher token f, choose a plaintext token e whose $P(e|f)$ is the largest). Perform sampling again.
+  \item Repeat until $\alpha=1$.
+\end{itemize}
+
+\subsection{Parallel Sampling}
+Inspired by \cite{newman:2009:distributed}, our parallel sampling procedure is described below:
+
+\begin{itemize}
+\item Collect bigrams and their counts from ciphertext and split the bigrams into N parts.
+\item Run slice sampling on each part for 5 iterations independently.
+\item Combine counts from each part to form a new count table and run sampling again on each part using the new table.\footnote{Except for combining the counts to form a new count table, other parameters remain the same. For instance, each part i has its own prior set to $\frac{1}{C_{i}}$, where $C_{i}$ is the number of word types in that part of ciphertext.}
+\end{itemize}
+

@@ -1,0 +1,18 @@
+\subsection{Deciphering with Bigrams}
+Slice sampling reduces the complexity of Bayesian decipherment from $O(N\cdot V\cdot R)$ to $O(N\cdot C\cdot R )$, where $C$ is a small number. However, the length of the ciphertext $N$ is still very big. Since we can decipher with a bigram language model, we posit that a frequency list of ciphertext bigrams may contain enough information for decipherment. Table \ref{txt2ngram} shows how full English sentences in the original data are broken into bigrams and their counts.
+
+ \begin{center}
+ \begin{table}
+ \begin{tabular}{ p{4cm} | l l l }
+  \multirow{4}{4cm}{man they took our land .
+  they took our arable land .} & took & our & 2 \\
+  & they & took & 2 \\
+  & land & . & 2 \\
+  & man & they & 1\\
+  & arable & land & 1\\
+  \end{tabular}
+  \caption{Converting full sentences to bigrams}
+   \label{txt2ngram}
+ \end{table} \end{center}
+
+ Instead of doing sampling on full sentences, we treat each bigram as a full ``sentence''. There are two advantages to use bigrams and their counts for decipherment. First, the bigrams and counts are just a much more compact representation of the original ciphertext with full sentences. For instance, after breaking a billion tokens from the English Gigaword corpus, we find only 118k bigrams and 236k tokens, which is only half size of the original text. In practice, we further discard all bigrams with low frequency, which makes the ciphertext even shorter. Second, using bigrams significantly reduces the number of sorted lists (from $|V|^2$ to $2|V|$) mentioned in the previous section. 

@@ -1,0 +1,47 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{naaclhlt2013}
+\usepackage{times}
+\usepackage{hhline}
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage{array}
+\usepackage{graphicx}
+%\linespread{2}
+
+%\doublespacing
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\setlength\titlebox{6.5cm}    % Expanding the titlebox
+
+\title{Dependency-Based Decipherment for Resource-Limited Machine Translation}
+
+%\author{Qing Dou and Kevin Knight \\
+ % Information Sciences Institute \\Department of Computer Science\\
+ % University of Southern California \\
+ % {\tt \{qdou,knight\}@isi.edu} \\}
+
+\date{}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+We introduce dependency relations into deciphering foreign languages and show that dependency relations help improve the state-of-the-art deciphering accuracy by over 500\%. We learn a translation lexicon from large amounts of genuinely non parallel data with decipherment to improve a phrase-based machine translation system trained with limited parallel data. In experiments, we observe BLEU gains of 1.2 to 1.8 across three different test sets.
+\end{abstract}
+
+\input{intro}
+%\input{bg}
+%\input{bi-grams}
+%\input{decipher-exp}
+%\input{mt-exp}
+%\input{conclusion}
+%\input{ack}
+
+
+
+\bibliography{ref}
+\bibliographystyle{naaclhlt2013}
+
+\end{document} 

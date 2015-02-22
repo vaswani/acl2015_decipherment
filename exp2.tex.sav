@@ -1,0 +1,144 @@
+\section{Improving Out of Domain Machine Translation}
+Domain specific machine translation (MT) is a challenge for statistical machine translation (SMT) systems trained on parallel corpora. It is common to see a significant drop in translation quality when translating out of domain texts. Although it is hard to find in domain parallel corpora, it is relatively easier to find in-domain monolingual corpora. We show that it is possible to learn a domain specific translation table from monolingual corpora and use it to improve out of domain translations.
+
+\subsection{Baseline SMT System}
+We build a state of the art phrase-based SMT system using Moses \cite{Moses}.
+The baseline system has 3 models: a translation model, a reordering model, and a language model. The language model can be trained on monolingual data, and the rest are trained on parallel data. By default, Moses uses the following 8 features to score a candidate translation:
+
+\begin{itemize}
+\item direct and inverse translation probabilities
+\item direct and inverse lexical weighting
+\item phrase penalty
+\item a language model
+\item a re-ordering model
+\item word penalty
+
+\end{itemize}
+
+Each of the 8 features has its own weight, which can be tuned on a held-out set using minimum error rate training. \cite{Och:2003:MER:1075096.1075117}.
+
+\subsection{Learning a New Translation Table with Decipherment}
+
+From a decipherment perspective, machine translation is a much more complex task than solving a word substitution cipher and poses three major challenges:
+
+\begin{itemize}
+\item Mappings between languages are nondeterministic, as words can have multiple translations
+\item Re-ordering of words
+\item Insertion and deletion of words
+\end{itemize}
+
+ Fortunately, our decipherment model does not assume deterministic mapping and is able to discover multiple translations. As we are not trying to build a full MT system in this work, we decide not to further complicate our model and focus on language pairs that don't have many re-orderings.
+
+\textbf{Problem formulation:} By ignoring word re-orderings, we can formulate MT decipherment problem as word substitution decipherment. We view source language $f$ as ciphertext and target language $e$ as plaintext. Our goal is to decipher $f$ into $e$ and estimate translation probabilities based on the decipherment.
+
+\textbf{Probabilistic decipherment:} Similar to solving a word substitution cipher, all we have to do here is to estimate the translation model parameters $P_\theta(f|e)$ using a large amount of monolingual data in $f$ and $e$ respectively. According to equation \ref{obj_decipher}, our objective is to estimate the model parameters so that the probability of source text P(f) is maximized.
+
+\begin{equation}
+\label{obj_decipher}
+\argmax_{\theta} \sum_{e} P(e) \cdot \prod_{i}^{n}  P_{\theta}(f_{i}|e_{i})
+\end{equation}
+
+\textbf{Building a Phrase Table:} Once the sampling process completes, we estimate translation probability $P(f|e)$ from the final sample using maximum likelihood estimation. We also decipher from the reverse direction to estimate $P(e|f)$. Finally, we build a phrase table by taking translation pairs seen in both decipherments.
+
+\subsection{Combining Phrase Tables}
+We now have two phrase tables: one learned from out-of-domain parallel corpus and one learned from in-domain monolingual corpora. The phrase table learnt through decipherment only contains word to word translations and each translation option only has two scores. Moses supports multiple phrase tables, we just need to specify two more weights for the scores from the newly learnt phrase table. During decoding, Moses will use the new phrase table when it encounters an unknown word. If a source word exists in both tables, Moses will create two separate decoding paths and choose the best one after taking other features into account.
+
+\section{MT Experiments and Results}
+\subsection{Data}
+In our MT experiments, we translate French into Spanish and use the following corpora to learn our translation model:
+
+\begin{itemize}
+\item Europarl Corpus \cite{koehn2005epc}: The Europarl parallel corpus is extracted from the proceedings of the European Parliament and includes versions in 11 European languages. The corpus contains articles from the political domain and is used to train our baseline system. We use the 6th version of the corpus. After cleaning, there are 1.3 million lines left for training. We use the last 2k lines for tuning and testing (1k for each), and the rest for training.  Details of training, tuning, and testing data are listed in Table \ref{data_para}.
+
+ \begin{table}
+ \begin{center}
+ \begin{tabular}{ |>{\centering}m{1.5cm} | p{5.5cm} | } \hline
+ \multirow{2}{*}{Train}  & French: 28.5 million tokens  \\
+         & Spanish:  26.6 million tokens \\ \hline
+ \multirow{2}{*}{Tune}  & French:  28k tokens \\
+         & Spanish: 26k tokens \\ \hline
+ \multirow{2}{*}{Test}  & French: 30k tokens \\
+         & Spanish: 28k tokens \\ \hline
+ \end{tabular}
+
+ \caption{Training, Tuning, and Testing Data}
+ \label{data_para}
+ \end{center}
+ \end{table}
+
+\item EMEA Corpus \cite{Tiedemann'2009}: EMEA is a parallel corpus made out of PDF documents from the European Medicines Agency. It contains articles from the medical domain, which is a good test bed for out of domain tasks. We use the first 2k pairs of sentences for tuning and testing (1k for each), and use the rest (1.1 million lines) for decipherment training. We split the corpus in ways that no parallel sentences are included in the training set. The splitting methods are listed in Table \ref{data_mono}.
+
+ \begin{table}
+ \begin{center}
+ \begin{tabular}{ | p{7.4cm} |  } \hline
+   \textbf{Comparable (CP):} \\ 
+   French: Every odd line, 8.7 million tokens  \\
+   Spanish: Every even line, 8.1 million tokens \\ \hline
+   \textbf{Non-parallel (NP):} \\ 
+   French: First 550k sentences, 9.1 million tokens \\
+   Spanish: Last 550k sentences, 7.7 million tokens \\ \hline
+
+ \end{tabular}
+\caption{Training Data for Decipherment}
+ \label{data_mono}
+ \end{center}
+ \end{table}
+
+\end{itemize}
+
+For decipherment training, we use lexical translation tables learned from the parallel corpus to initialize our sampling process.
+
+\subsection{Results}
+
+ \begin{table*}
+ \begin{center}
+ \begin{tabular}{ |c | c | c | c | c | c | c | } \hline
+ Train Data & Tune Data & Tune LM & Decode LM & Baseline & Decipher-CP & Decipher-NP \\ \hline
+  Europarl & Europarl  & Europarl  & Europarl & 24.9 &  & \\ \hline
+ Europarl & Europarl  & Europarl  & EMEA & 30.5 & 33.2* & 32.4* \\ \hline
+ Europarl & EMEA  & EMEA  & EMEA & 37.3 & 41.1 & 39.2 \\ \hline
+ Europarl + EMEA & EMEA & EMEA & EMEA & 67.4  &  & \\ \hline
+ 
+ \end{tabular}
+
+ \caption{MT experiment results: BLEU scores are on an EMEA blind test set. The third and fourth column indicate which language model is used for tuning and decoding respectively. Baseline is trained on parallel data only. Decipher-CP and Decipher-NP use a phrase table learned from comparable and non-parallel EMEA corpus respectively.}
+ \label{result}
+ \end{center}
+ \end{table*}
+
+BLEU \cite{Papineni:2002:BMA:1073083.1073135} is used as a standard evaluation metric.
+We compare the following 3 systems in our experiments, and present the results in Table \ref{result}. 
+%We evaluate the baseline system on the in-domain test set and all systems on the same French out-of-domain test set.
+
+\begin{itemize}
+\item \textbf{Baseline:} Trained on Europarl
+\item \textbf{Decipher-CP:} Trained on Europarl + Comparable EMEA
+\item \textbf{Decipher-NP:} Trained on Europarl + Non-Parallel EMEA
+\end{itemize}
+
+ Our baseline system achieves 38.2 BLEU score on the in-domain test set. On the out-of-domain task, the BLEU score drops to 24.9. However, with an out-of-domain language model, the score rises up 30.5. Although it is much higher than the baseline result, we can further improve it by including a new phrase table learnt through decipherment. In a real out-of-domain task, we are unlikely to have any parallel data to tune weights for the new phrase table. Therefore, we can only set it manually. In experiments, each score in the new phrase table has a weight of 3, and the BLEU score rises up to 33.2. In the third row of the table, we assume that there is a small amount of out of domain parallel data for tuning. With better weights, our baseline BLEU score increases to 37.3, and our combined system rise to 41.1 and 39.2 respectively. In the fourth row of the table, we compare the combined systems with an even better baseline. This time, the baseline is given half of the EMEA tuning set for training and uses the other half for weight tuning. From the table, we can see that the combined system is still able to beat the baseline by ? BLEU points. It is not surprising to see that Decipher-CP outperforms Decipher-NP as the former is trained using more comparable data.
+
+ The phrase table learnt from monolingual data consists of both observed and unknown words. Table \ref{sample_translation} shows the top 10 most frequent unseen words in the table learnt from non-parallel EMEA corpus. Among the 10 words, 9 have correct translations. It is interesting to see that our algorithm is able to find multiple correct translations.
+
+\begin{table}
+ \begin{center}
+ \begin{tabular}{ | >{\centering}m{1.8cm} >{\centering}m{1.8cm} >{\centering\arraybackslash}m{1.3cm}  >{\centering\arraybackslash}m{1.3cm} | } \hline
+   French & Spanish & $P(fr|es)$ & $P(es|fr)$ \\ \hline
+   $<$  & $<$ & 0.32 & 1.00 \\ \hline
+   h\'epatique & hep\'atico & 0.88 & 0.08 \\ 
+     & hep\'atica & 0.76 & 0.85 \\ \hline
+   injectable & inyectable & 0.91 & 0.92 \\ \hline
+   dl  & dl & 1.00 & 0.70 \\ \hline
+   $>$  & $>$ & 0.32 & 1.00 \\ \hline
+   ribavirine  & ribavirina & 0.40 & 1.00 \\ \hline
+    olanzapine & olanzapina & 0.57 & 1.00 \\ \hline
+    clairance & aclaramiento & 0.99 & 0.64 \\ \hline
+    pellicul\'es¦s& recubiertos & 1.00 & 1.00 \\ \hline
+    pharmaco- cin\'etique & farmaco- cin\'etico & 1.00 & 1.00 \\ \hline
+
+ 
+ \end{tabular}
+\caption{Sample translation table learnt from monolingual data}
+ \label{sample_translation}
+ \end{center}
+ \end{table} 

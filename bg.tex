@@ -1,0 +1,64 @@
+\section{Decipherment Model}
+In this section, we describe the decipherment model, upon which this work is built on. We first briefly introduce recent advances made in decipherment work, then describe the state-of-the-art approach, and in the end, bring up the problem that we address in this work. 
+
+Unsupervised learning of translations from non-parallel is an old and challenging problem. In recent years, there has been growing interests in approaching it using decipherment techniques. \newcite{ravi-knight:2011} built an MT system using only non parallel data for translating movie subtitles. \newcite{Dou:2012} and \newcite{Nuhn:2012} made decipherment scalable to handle larger vocabulary. \newcite{dou-knight:2013:EMNLP} improved decipherment accuracy significantly by using dependency information between words. 
+
+Throughout this paper, we use $f$ to denote target language or ciphertext tokens, and $e$ to denote source language or plaintext tokens. Given ciphertext $F:f_{1}...f_{n}$, the task of decipherment is to find a set of parameters $P(f_{i}|e_{i})$ that convert $F$ to sensible plaintext. The ciphertext $F$ can either be full sentences \cite{ravi-knight:2011,Nuhn:2012} or simply bigrams \cite{dou-knight:2013:EMNLP}. Since using bigrams and their counts significantly speeds up decipherment, in this work, we also see $F$ as bigrams. 
+
+Motivated by the idea from \newcite{Weaver:1955}, we model a ciphertext bigram $F$ with the following generative story:
+
+\begin{itemize}
+\item  First, a languae model $P(E)$ generates a sequence of two plaintext tokens $e_{1},e_{2}$ with probability $P(e_{1},e_{2})$.
+\item  Then, substitute $e_{1}$ with $f_{1}$ and $e_{2}$ with $f_{2}$ with probability $P(f_{1}|e_{1}) \cdot P(f_{2}|e_{2})$.
+\end{itemize}
+
+Based on the above generative story, the probability of any cipher bigram $F$ is:
+%
+\[
+\label{p_cipher}
+P(F) =  \sum_{e_{1}e_{2}} P(e_{1}e_{2}) \prod_{i=1}^{2}P(f_{i}|e_{i})
+\]
+%
+
+Let the entire ciphertext corpus contains $N$ such bigrams $F_{1}...F_{N}$, we write down the probability of the ciphertext corpus as:
+%
+\[
+\label{p_corpus}
+P(corpus) =  \prod_{j=1}^{N} P(F_{j})
+\]
+%
+
+Given a plaintext bigram language model, the training objective is to find a set of parameters $P(f|e)$ that maximize $P(corpus)$. When formulated like this, one can directly apply EM to solve the problem \cite{knight-EtAl:2006}. However, EM has time complexity $O( N\cdot V_{e}^{2})$ and space complexity $O(V_{f}\cdot V_{e})$, where $V_{f}$, $V_{e}$ are the sizes of ciphertext and plaintext vocabularies respectively, and $N$ is the number of cipher bigrams. This makes the EM approach unable to handle long ciphertext with large vocabulary size. 
+%Unfortunately, EM is not scalable when $V_{f}$, $V_{e}$, and $N$ are very large.
+
+An alternative approach to solve the problem is to apply Bayesian inference \cite{ravi-knight:2011,Dou:2012}. Bayesian decipherment still uses the same generative story described previously. However, in Bayeisan decipherment, we no longer search for parameters $P(f|e)$ that maximize the observed ciphertext. Instead, we draw samples from plaintext sequences given the ciphertext. During sampling, the probability of any possible plaintext sample $e_{1}e_{2}$ is computed using Equality \ref{p_sample}:
+%
+\[
+\label{p_sample}
+P_{sample}(e_{1}e_{2}) =  P(e_{1}e_{2}) \prod_{i=1}^{2}P_{CRP}(f_{i}|e_{i})
+\]
+%
+In the above equation, the translation probability $P_{CRP}(f_{i}|e_{i})$ is modeled by Chinese Restaurant Process(CRP), and is defined in Equation \ref{p_channel}.
+%
+\[
+\label{p_channel}
+P_{CRP}(f_{i}|e_{i}) = \frac{\alpha P_0(f_{i}|e_{i})+count(f_{i},e_{i})}{\alpha+count(e_{i})}
+\]
+%
+where $P_{0}$ is a base distribution, also known as a prior, and $\alpha$ is a parameter that controls how much we trust the base distribution. $count(f_{i},e_{i})$ and $count(e_{i})$ record the number of times $f_{i},e_{i}$ and $e_{i}$ appear in previously generated samples respectively. The base distribution is given independently, and in all the previous work, it is set to uniform.
+
+At the end of sampling, we compute $P(f_{i}|e_{i})$ from ciphertext and its plaintext samples using maximum likelihood estimation:
+
+\[
+\label{mlh_estimation}
+P(f_{i}|e_{i}) =  \frac{count(f_{i},e_{i})}{count(e_{i})}
+\]
+
+\section{Model Base Distribution with Word Context Similarities}
+As shown in the previous section, the base distribution in Bayesian decipherment is given independent of the inference process. The easiest thing to do is to set it to uniform, which is the approach taken by all previous Bayesian decipherment work. We argue that a better base distribution can improve decipherment accuracy. Ideally, we should assign higher base distribution probabilities to word pairs that are similar.
+
+One straightforward way is to consider orthographic similarities. This is true for close related languages. For instance, English word ``new'' is translated as ``neu'' in German, and ``nueva'' in Spanish. However, this fails when two languages are not close related, such as Chinese and English.
+
+There is a number of previous work that tries to discover translations from comparable data based on word context similarities. This is based on the assumption that words appear in similar context have similar meanings. The approach works very well in monolingual settings. However, when it comes to finding translations, one of the challenges is to draw a mapping between two different context space. In previous work, the mapping is usually learned from a seed lexicon.
+
+We adopt the approach based on word context similarities to learn a better base distribution. However, our work is different from previous approach in the following ways: First, our work does not rely on any seed lexicon to learn the mapping between word context vectors, rather, it uses the results from sampling. Second, the mapping is not always fixed, but becomes better as the sampling process progresses. Last, but not least, the base distribution derived from the mapping and word contexts is used to improve decipherment.

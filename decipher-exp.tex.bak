@@ -1,0 +1,87 @@
+\section{Deciphering Spanish Gigaword}
+\label{decipher_gigaword}
+In this section, we compare dependency bigrams with adjacent bigrams for deciphering Spanish into English.
+
+\subsection{Data}
+
+We use the Gigaword corpus for our decipherment experiments. The corpus contains news articles from different news agencies and is available in Spanish and English.  We use only the AFP (Agence France-Presse) section of the corpus in decipherment experiments. We tokenize the corpus using tools that come with the Europarl corpus \cite{europarl}. To shorten the time required for running different systems on large amounts of data, we keep only the top 5000 frequent word types in both languages and replace all other word types with UNK. We also throw away lines with more than 40 tokens, as the Spanish parser \cite{bohnet:2010:PAPERS} we use is slow when processing long sentences. After preprocessing, the corpus contains approximately 440 million tokens in Spanish and 350 million tokens in English.  To obtain dependency bigrams, we use the Bohnet parsers \cite{bohnet:2010:PAPERS} to parse both the Spanish and English version of the corpus.
+
+\subsection{Systems}
+Three systems are evaluated in the experiments. We implement a baseline system, Adjacent, based on \newcite{Dou:2012}. The baseline system collects adjacent bigrams and their counts from Spanish and English texts. It then builds an English bigram language model using the English adjacent bigrams and uses it to decipher the Spanish adjacent bigrams.
+
+We build the second system, Dependency, using dependency bigrams for decipherment. As the two parsers do not output the same set of dependency relations, we cannot extract all types of dependency bigrams. Instead, we select a subset of dependency bigrams whose dependency relations are shared by the two parser outputs. The selected dependency relations are: Verb/Subject, Verb/Noun-Object, Preposition/Object, Noun/Modifier.
+%The four types of dependent relations are common dependent relations, covering majority of both parsers' outputs.
+Decipherment runs the same way as in the baseline system.
+
+The third system, DepType, is built using both dependent bigrams and their dependency types. We first extract dependency bigrams for both languages, then group them based on their dependency types. As both parsers treat noun phrases dependent on ``del'',  ``de'', and ``of'' as prepositional phrases, we choose to divide the dependency bigrams into 3 groups and list them in Table \ref{groups}.
+%
+ \begin{table}
+ \begin{center}
+ \begin{tabular}{ |c|p{5cm}| } \hline
+             & Dependency Types \\ \hline
+Group 1 & Verb/Subject \\ \hline
+Group 2 & Preposition/Preposition-Object, Noun/Noun-Modifier \\ \hline
+Group 3 & Verb/Noun-Object \\ \hline
+ \end{tabular}
+ \caption{Dependency relations divided into three groups}
+ \label{groups}
+ \end{center}
+ \end{table}
+%
+A separate language model is built for each group of English dependency bigrams and used to decipher the group of Spanish dependency bigrams with same dependency type.
+
+For all the systems, language models are built using the SRILM toolkit \cite{srilm}. For the Adjacent system, we use Good-Turing smoothing. For the other systems, we use a mix of Witten-Bell and Good-Turing smoothing.
+
+%By selecting a subset of dependency bigrams from the parsers' outputs, systems using dependency bigrams use less Spanish tokens for %decipherment. We measure how many tokens are used for decipherment by summing up bigram counts. Given a Spanish text with 100 million %tokens, the Baseline system uses 92.3 million tokens (counts from singleton bigrams are omitted), while the Dependency system uses only %46.7 million tokens. We also list numbers of bigram types extracted by different systems in Table \ref{bigram_counts}. From the table we can %see that the systems using dependency bigrams extract less number of bigrams when a Spanish text contains less than 100 million tokens.
+
+% \begin{table}
+% \begin{center}
+ %\begin{tabular}{ |c|c|c|c| } \hline
+ % & 1m & 10m & 100m \\ \hline
+% Baseline & 59.4k & 229.3k & 773.5k \\ \hline
+% Dependency & 40.1k & 208.1k & 956.6k \\ \hline
+% DepType & 42.4k & 215.0k & 985.6k \\ \hline
+ %\end{tabular}
+
+ %\caption{Number of bigram types extracted by different systems from Spanish texts with 1 million, 10 million, and 100 million tokens %respectively. (Singleton bigrams are not counted)}
+ %\label{bigram_counts}
+ %\end{center}
+ %\end{table}
+
+\subsection{Sampling Procedure}
+\label{sample_procedure}
+In experiments, we find that the iterative sampling method described by \newcite{Dou:2012} helps improve deciphering accuracy. We also find that combining results from different decipherments helps find more correct translations at each iteration. Thus, instead of using a single sampling process, we use 10 different sampling processes at each iteration. The details of the new sampling procedure are provided here:
+
+ \begin{itemize}
+  \item Extract dependency bigrams from parsing outputs and collect their counts.
+  \item Keep bigrams whose counts are greater than a threshold $\alpha$. Then start 10 different randomly seeded and initialized sampling processes. Perform sampling.
+  \item At the end of sampling, extract word translation pairs $(f,e)$ from the final sample. Estimate translation probabilities $P(e|f)$  for each pair. Then construct a translation table by keeping translation pairs $(f,e)$ seen in more than one decipherment and use the average $P(e|f)$ as the new translation probability.
+  \item Lower the threshold $\alpha$ to include more bigrams into the sampling process. Start 10 different sampling processes again and initialize the first sample using the translation pairs obtained from the previous step (for each Spanish token f, choose an English token e whose $P(e|f)$ is the highest). Perform sampling again.
+  \item Repeat until $\alpha=1$.
+\end{itemize}
+
+
+\subsection{Deciphering Accuracy}
+We choose the first 1000 lines of the monolingual Spanish texts as our test data. The data contains 37,505 tokens and 6556 word types. We use type accuracy as our evaluation metric: Given a word type $f$ in Spanish, we find a translation pair $(f,e)$ with the highest average $P(e|f)$ from the translation table learned through decipherment. If the translation pair $(f,e)$ can also be found in a gold translation lexicon $T_{gold}$, we treat the word type $f$ as correctly deciphered. Let $|C|$ be the number of word types correctly deciphered, and $|V|$ be the total number of word types evaluated. We define type accuracy as $\frac{|C|}{|V|}$.
+
+We use GIZA \cite{Och:2003:SCV:778822.778824} to align a small amount of Spanish-English parallel text (1 million tokens for each language), and use the lexicon derived from the alignment as $T_{gold}$. $T_{gold}$ contains a subset of 4408 types seen in the test data, among which, 2878 are also top 5000 frequent word types.
+
+
+
+\subsection{Results}
+During decipherment, we gradually increase the size of Spanish texts and compare the learning curves of three deciphering systems in Figure \ref{curve}.
+
+ \begin{figure}[!ht]
+  \centering
+
+  \includegraphics[width=3.3in,height=2.4in]{curve}
+  \caption{Learning curves for three decipherment systems. Compared with Adjacent (previous state of the art), systems that use dependency bigrams improve deciphering accuracy by over 500\% .}
+\label{curve}
+\end{figure}
+
+
+With 100k token Spanish text, the performance of three systems are similar. However, the learning curve of Adjacent plateaus quickly, while those of the syntax based systems soar up as more data becomes available and still rise sharply when the size of Spanish texts increases to 10 million tokens, where the DepType system improves deciphering accuracy of the Adjacent system from 4.2\% to 24.6\%. In the end, with 100 million tokens, the accuracy of the DepType system rises to 27.0\%. The accuracy is even higher (41\%), when evaluated against the top 5000 frequent word types only.
+
+
+
+

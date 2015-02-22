@@ -1,0 +1,4 @@
+\section{Conclusion and Future Work}
+We introduce syntax for deciphering Spanish into English. Experiment results show that using dependency bigrams improves decipherment accuracy by over 500\% compared with the state-of-the-art approach. Moreover, we learn a domain specific translation lexicon by deciphering large amounts of monolingual data and show that the lexicon can improve a baseline machine translation system trained with limited parallel data. 
+
+In the future, we plan to apply the techniques in this paper to help translate African languages, and investigate learning more complex translation rules from monolingual data (e.g. phrasal and syntactical translation rules).

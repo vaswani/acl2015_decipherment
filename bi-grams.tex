@@ -1,0 +1,34 @@
+\section{From Adjacent Bigrams to Dependency Bigrams}
+\label{adj2dep}
+A major limitation of work by \newcite{Dou:2012} is their monotonic generative story for deciphering adjacent bigrams. While the generation process works well for deciphering similar languages (e.g. Spanish and French) without considering reordering, it does not work well for languages that are more different in grammar and word order (e.g. Spanish and English). In this section, we first look at why adjacent bigrams are bad for decipherment. Then we describe how to use syntax to solve the problem.
+
+
+ \begin{table}
+ \begin{center}
+ \begin{tabular}{ |p{3.4cm}|p{3.4cm}| }
+ \hline
+  \multicolumn{2}{|c|}{misi\'{o}n de naciones unidas en oriente medio} \\ \hline
+  misi\'{o}n  de & misi\'{o}n naciones \\
+  de naciones & naciones unidas \\
+  naciones  unidas & misi\'{o}n en \\
+  unidas  en & en oriente \\
+  en  oriente & oriente  medio \\
+  oriente  medio & \\ \hline
+ \end{tabular}
+  \caption{Comparison of adjacent bigrams (left) and dependency bigrams (right) extracted from the same Spanish text}
+   \label{txt2bigrams}
+\end{center}
+ \end{table}
+
+The left column in Table \ref{txt2bigrams} contains adjacent bigrams extracted from the Spanish phrase ``misi\'{o}n de naciones unidas en oriente medio''. The correct decipherment for the bigram ``naciones unidas'' should be ``united nations''. Since the deciphering model described by \newcite{Dou:2012} does not consider word reordering, it needs to decipher the bigram into ``nations united'' in order to get the right word translations ``naciones''$\rightarrow$``nations'' and ``unidas''$\rightarrow$``united''. However, the English language model used for decipherment is built from English adjacent bigrams, so it strongly disprefers ``nations united'' and is not likely to produce a sensible decipherment for ``naciones unidas''. The Spanish bigram ``oriente medio''  poses the same problem. Thus, without considering word reordering, the model described by \newcite{Dou:2012} is not a good fit for deciphering Spanish into English.
+
+However, if we extract bigrams based on dependency relations for both languages, the model fits better. To extract such bigrams, we first use dependency parsers to parse both languages, and extract bigrams by putting head word first, followed by the modifier.\footnote{As use of ``del'' and ``de'' in Spanish is much more frequent than the use of ``of'' in English, we skip those words by using their head words as new heads if any of them serves as a head.} We call these dependency bigrams. The right column in Table \ref{txt2bigrams} lists examples of Spanish dependency bigrams extracted from the same Spanish phrase. With a language model built with English dependency bigrams, the same model used for deciphering adjacent bigrams is able to decipher Spanish dependency bigram ``naciones(head) unidas(modifier)'' into ``nations(head) united(modifier)''.
+
+We might instead propose to consider word reordering when deciphering adjacent bigrams (e.g. add an operation to swap tokens in a bigram). However, using dependency bigrams has the following advantages:
+
+\begin{itemize}
+\item  First, using dependency bigrams avoids complicating the model, keeping deciphering efficient and scalable.
+\item  Second, it addresses the problem of long distance reordering, which can not be modeled by swapping tokens in bigrams.
+\end{itemize}
+
+Furthermore, using dependency bigrams allows us to use dependency types to further improve decipherment. Suppose we have a Spanish dependency bigram ``accept\'{o}(verb) solicitud(object)''. Then all of the following English dependency bigrams are possible decipherments: ``accepted(verb) UN(subject)'', ``accepted(verb) government(subject)'', ``accepted(verb) request(object)''. However, if we know the type of the Spanish dependency bigram and use a language model built with the same type in English, the only possible decipherment is ``accepted(verb) request(object)''. If we limit the search space, a system is more likely to find a better decipherment.  

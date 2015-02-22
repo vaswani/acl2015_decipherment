@@ -1,0 +1,184 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citename{Bergsma and Van~Durme}2011]{Bergsma:2011}
+Shane Bergsma and Benjamin Van~Durme.
+\newblock 2011.
+\newblock Learning bilingual lexicons using the visual similarity of labeled
+  web images.
+\newblock In {\em Proceedings of the Twenty-Second international joint
+  conference on Artificial Intelligence - Volume Volume Three}. AAAI Press.
+
+\bibitem[\protect\citename{Bohnet}2010]{bohnet:2010:PAPERS}
+Bernd Bohnet.
+\newblock 2010.
+\newblock Top accuracy and fast dependency parsing is not a contradiction.
+\newblock In {\em Proceedings of the 23rd International Conference on
+  Computational Linguistics}. Coling.
+
+\bibitem[\protect\citename{Daum{\'e} and
+  Jagarlamudi}2011]{Daume:2011:DAM:2002736.2002819}
+Hal Daum{\'e}, III and Jagadeesh Jagarlamudi.
+\newblock 2011.
+\newblock Domain adaptation for machine translation by mining unseen words.
+\newblock In {\em Proceedings of the 49th Annual Meeting of the Association for
+  Computational Linguistics: Human Language Technologies}. Association for
+  Computational Linguistics.
+
+\bibitem[\protect\citename{Dou and Knight}2012]{Dou:2012}
+Qing Dou and Kevin Knight.
+\newblock 2012.
+\newblock Large scale decipherment for out-of-domain machine translation.
+\newblock In {\em Proceedings of the 2012 Joint Conference on Empirical Methods
+  in Natural Language Processing and Computational Natural Language Learning}.
+  Association for Computational Linguistics.
+
+\bibitem[\protect\citename{Dou and Knight}2013]{dou-knight:2013:EMNLP}
+Qing Dou and Kevin Knight.
+\newblock 2013.
+\newblock Dependency-based decipherment for resource-limited machine
+  translation.
+\newblock In {\em Proceedings of the 2013 Conference on Empirical Methods in
+  Natural Language Processing}. Association for Computational Linguistics.
+
+\bibitem[\protect\citename{Dou \bgroup et al.\egroup
+  }2014]{dou-vaswani-knight:2014:EMNLP2014}
+Qing Dou, Ashish Vaswani, and Kevin Knight.
+\newblock 2014.
+\newblock Beyond parallel data: Joint word alignment and decipherment improves
+  machine translation.
+\newblock In {\em Proceedings of the 2014 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}. Association for Computational
+  Linguistics.
+
+\bibitem[\protect\citename{Garera \bgroup et al.\egroup }2009]{Garera:2009}
+Nikesh Garera, Chris Callison-Burch, and David Yarowsky.
+\newblock 2009.
+\newblock Improving translation lexicon induction from monolingual corpora via
+  dependency contexts and part-of-speech equivalences.
+\newblock In {\em Proceedings of the Thirteenth Conference on Computational
+  Natural Language Learning}. Association for Computational Linguistics.
+
+\bibitem[\protect\citename{Haghighi \bgroup et al.\egroup
+  }2008]{haghighi-EtAl:2008:ACLMain}
+Aria Haghighi, Percy Liang, Taylor Berg-Kirkpatrick, and Dan Klein.
+\newblock 2008.
+\newblock Learning bilingual lexicons from monolingual corpora.
+\newblock In {\em Proceedings of ACL-08: HLT}. Association for Computational
+  Linguistics.
+
+\bibitem[\protect\citename{Irvine and
+  Callison-Burch}2013a]{irvine-callisonburch:2013:WMT}
+Ann Irvine and Chris Callison-Burch.
+\newblock 2013a.
+\newblock Combining bilingual and comparable corpora for low resource machine
+  translation.
+\newblock In {\em Proceedings of the Eighth Workshop on Statistical Machine
+  Translation}. Association for Computational Linguistics, August.
+
+\bibitem[\protect\citename{Irvine and
+  Callison-Burch}2013b]{irvine-callisonburch:2013}
+Ann Irvine and Chris Callison-Burch.
+\newblock 2013b.
+\newblock Supervised bilingual lexicon induction with multiple monolingual
+  signals.
+\newblock In {\em Proceedings of the 2013 Conference of the North American
+  Chapter of the Association for Computational Linguistics: Human Language
+  Technologies}. Association for Computational Linguistics.
+
+\bibitem[\protect\citename{Irvine \bgroup et al.\egroup
+  }2013]{irvineQuirkDaumeEMNLP13}
+Ann Irvine, Chris Quirk, and Hal~Daume III.
+\newblock 2013.
+\newblock Monolingual marginal matching for translation model adaptation.
+\newblock In {\em Proceedings of the Conference on Empirical Methods in Natural
+  Language Processing (EMNLP)}. Association for Computational Linguistics.
+
+\bibitem[\protect\citename{Klementiev \bgroup et al.\egroup
+  }2012]{KlementievCOLING}
+Alexandre Klementiev, Ivan Titov, and Binod Bhattarai.
+\newblock 2012.
+\newblock Inducing crosslingual distributed representations of words.
+\newblock In {\em Proceedings of COLING 2012}. The COLING 2012 Organizing
+  Committee.
+
+\bibitem[\protect\citename{Kneser and Ney}1995]{KneserNey95}
+Reinhard Kneser and Hermann Ney.
+\newblock 1995.
+\newblock Improved backing-off for m-gram language modeling.
+\newblock {\em IEEE International Conference on Acoustics, Speech, and Signal
+  Processing (ICASSP)}.
+
+\bibitem[\protect\citename{Knight \bgroup et al.\egroup
+  }2006]{knight-EtAl:2006}
+Kevin Knight, Anish Nair, Nishit Rathod, and Kenji Yamada.
+\newblock 2006.
+\newblock Unsupervised analysis for decipherment problems.
+\newblock In {\em Proceedings of the COLING/ACL 2006 Main Conference Poster
+  Sessions}. Association for Computational Linguistics.
+
+\bibitem[\protect\citename{Martins \bgroup et al.\egroup }2013]{TurboParser}
+Andre Martins, Miguel Almeida, and Noah~A. Smith.
+\newblock 2013.
+\newblock Turning on the turbo: Fast third-order non-projective turbo parsers.
+\newblock In {\em Proceedings of the 51st Annual Meeting of the Association for
+  Computational Linguistics (Volume 2: Short Papers)}. Association for
+  Computational Linguistics.
+
+\bibitem[\protect\citename{Mimno and McCallum}2012]{mimno2012topic}
+David Mimno and Andrew McCallum.
+\newblock 2012.
+\newblock Topic models conditioned on arbitrary features with
+  dirichlet-multinomial regression.
+\newblock {\em arXiv preprint arXiv:1206.3278}.
+
+\bibitem[\protect\citename{Nuhn \bgroup et al.\egroup }2012]{Nuhn:2012}
+Malte Nuhn, Arne Mauser, and Hermann Ney.
+\newblock 2012.
+\newblock Deciphering foreign language by combining language models and context
+  vectors.
+\newblock In {\em Proceedings of the 50th Annual Meeting of the Association for
+  Computational Linguistics: Long Papers - Volume 1}. Association for
+  Computational Linguistics.
+
+\bibitem[\protect\citename{Och and Ney}2003]{GIZA}
+Franz~Josef Och and Hermann Ney.
+\newblock 2003.
+\newblock A systematic comparison of various statistical alignment models.
+\newblock {\em Computational Linguistics}.
+
+\bibitem[\protect\citename{Rapp}1995]{Rapp:1995}
+Reinhard Rapp.
+\newblock 1995.
+\newblock Identifying word translations in non-parallel texts.
+\newblock In {\em Proceedings of the 33rd annual meeting on Association for
+  Computational Linguistics}. Association for Computational Linguistics.
+
+\bibitem[\protect\citename{Ravi and Knight}2011]{ravi-knight:2011}
+Sujith Ravi and Kevin Knight.
+\newblock 2011.
+\newblock Deciphering foreign language.
+\newblock In {\em Proceedings of the 49th Annual Meeting of the Association for
+  Computational Linguistics: Human Language Technologies}. Association for
+  Computational Linguistics.
+
+\bibitem[\protect\citename{Ravi}2013]{ravi:2013}
+Sujith Ravi.
+\newblock 2013.
+\newblock Scalable decipherment for machine translation via hash sampling.
+\newblock In {\em Proceedings of the 51th Annual Meeting of the Association for
+  Computational Linguistics}. Association for Computational Linguistics.
+
+\bibitem[\protect\citename{Stolcke}2002]{srilm}
+Andreas Stolcke.
+\newblock 2002.
+\newblock {SRILM} - an extensible language modeling toolkit.
+\newblock In {\em Proceedings of the International Conference on Spoken
+  Language Processing}.
+
+\bibitem[\protect\citename{Weaver}1955]{Weaver:1955}
+Warren Weaver, 1955.
+\newblock {\em Translation (1949). Reproduced in W.N. Locke, A.D. Booth
+  (eds.).}
+\newblock MIT Press.
+
+\end{thebibliography}

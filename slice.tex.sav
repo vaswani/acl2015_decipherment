@@ -1,0 +1,30 @@
+\section{Slice Sampling for Bayesian Decipherment}
+Application of slice sampling in Bayesian decipherment is a major contribution of our work. In this section, we first give an introduction to Bayesian decipherment 
+\subsection{Bayesian Decipherment}
+Bayesian inference has been widely used in natural language processing \cite{goldwater-griffiths:2007:ACLMain,Blunsom:2009,ravi-knight:2011}. They are very attractive for problems like word substitution ciphers for the following reasons. First of all, there are no memory bottlenecks as no derivation lattice needs to be instantiated during inference. Secondly, prior specification encourages the model to learn a sparse distribution, which is important for learning a good mapping between plain word types and cipher types.
+
+The inference is usually performed using Gibbs sampling. For decipherment, a Gibbs sampler keeps drawing samples from plain text sequences according to probability P(d), which can be calculated using the generative story in section \ref{wsc}. In Bayesian inference, $P(e)$ is still given by an n-gram language model, while the channel probability is modeled by the Chinese Restaurant Process (CRP):
+
+\begin{equation}
+P(c_{i}|e_{i})=\frac{\alpha \cdot prior+count(c_{i},e_{i})}{\alpha+count(e_{i})}
+\end{equation}
+
+where $prior$ is the base distribution\footnote{We set prior to $\frac{1}{C}$ in all our experiments, where C is the number of word types in cipher text} and count keeps record of events occurred in the history. Each sampling operation involves changing a plain text token $e_{i}$, which has $V$ possible choices where $V$ is the plain text vocabulary size, and the final sample is chosen with probability $\frac{P(d)}{\sum_{n=1}^{V}P(d)}$.
+
+\subsection{Slice Sampling}
+With Gibbs sampling, one has to evaluate all possible plain text word types (usually 10k|1M) for each sample decision. This is particularly slow when the cipher text is long and the vocabulary is large. Slice Sampling \cite{Neal00slicesampling} can solve this problem by automatically adjusting the number of samples to be considered for each sample operation.
+
+Suppose the derivation probability for current sample is $ P(current\_s) $, slice sampling draws a sample in two steps:
+\begin{itemize}
+\item Select a threshold T uniformly from the range $\{0,P(current\_s)\}$.
+\item Draw a sample s uniformly from a pool of candidates: $ \{s|P(s)>T\}$.
+\end{itemize}
+%
+From the above two steps, we can see that given a threshold T, we only need to consider those samples whose probability is higher than T. This may lead to a significant reduction on the number of samples to be considered if probabilities of the most possible samples are below T. In practice, the first step is easy to implement while it is difficult to make the second step efficient. An obvious way to collect candidate samples is to go over all possible samples and record those with probabilities higher than T. However, doing this won't save us any time. Fortunately, for Bayesian decipherment, we are able to complete the second step efficiently.
+
+\begin{equation}
+\label{pass}
+P(XY'Z)*P(c_{i}|Y')>T
+\end{equation}
+
+According to equation \ref{obj_f}, the probability of current sample is given by a language model P(e) and a channel model $P(c|e)$. The language model is usually an n-gram language model.  Suppose our current sample s contains English tokens X, Y, and Z at position i-1, i, and i+1 respectively. Let $c_{i}$ be the cipher token at position i. To obtain a new sample, we just need to change token Y to Y'. Since the rest of the sample stays the same, we only need to calculate the tri-gram probability: P(XY'Z) and the channel model probability $P(c_{i}|Y')$. For the first step, we choose a threshold T uniformly between 0 and $P(XYZ)*P(c_{i}|Y)$. For the second step, we can always choose a word Y' randomly and accept it as a new sample if inequality \ref{pass} is satisfied. However, in the worst case, we would end up exploring all possible choices. Can we do better in some cases? We notice that two types of Y' are more likely to pass the threshold T: (1) Those that have a very high tri-gram probability and (2) those that have high channel model probability. To find candidates that have high tri-gram probability, we build sorted lists ranked by $P(XY'Z)$, which can be pre-computed off-line. We only keep top k English words for each of the sorted list. When the last item $Y_{k}$ in the list satisfies  $P(XY_{k}Z)*prior<T$, we can draw a sample in a different way: let set $A = \{Y'|P(XY'Z)*prior>T\}$ and set $B=\{Y'|count(c_{i},Y')>0\}$. Then we only need to select a Y' uniformly from $A \cup B$ subject to inequality \ref{pass}. Our algorithm alternates between the two sampling approaches described above. In experiment where the plain text vocabulary is 26000, our algorithm only needs to look at 5 possible choices on average.  

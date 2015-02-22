@@ -1,0 +1,80 @@
+\section{Decipherment Experiments}
+In this section, we evaluate our new sampling algorithm in two different experiments. In the first experiment, we compare our method with previous approach on the same data set. In the second experiment, we  
+
+\subsection{Deciphering Transtac Corpus}
+\subsubsection{Data}
+We use Transtac Corpus and split it the same way as it was split in \cite{ravi-knight:2011}. The data used to create cipher text consists of 104k tokens, and 3397 word types. The data for language model training contains 2.7M word tokens and 25761 word types\footnote{In practice, we replaced low frequency word types with a "UNK" symbol, leaving 8000 word types in total}. The cipher text is created by replacing each English word with a cipher word.
+
+ We build two language models: one 3-gram language model on the full sentences for decoding, and one bi-gram language model on bi-grams for decipherment. We use Moses \cite{Moses} to perform the decoding task \footnote{We set distortion limit to 0 for decoding without reordering. The language model weight is set to 1, and the weight for translation table is 3.}. The translation table $P(c|e)$ is built based on the counts collected from the final sample. Essentially, Moses tries to find the English sequence e that maximizes $P(e)\cdot P(c|e)^3$
+
+ \subsubsection{Results}
+ We evaluate the performance of our algorithm by deciphering accuracy, which measures the percentage of correctly deciphered cipher tokens. Table \ref{result} compares the deciphering accuracy with the sate of the art algorithm.
+
+
+ \begin{table}
+ \begin{center}
+ \begin{tabular}{ |l | cl | } \hline
+ Method & Deciphering Accuracy \\ \hline
+ Ravi and Knight  & 80.0 (with 2-gram LM) \\
+                  & 82.5 (with 3-gram LM)\\
+ Slice Sampling   & 88.1 (with 2-gram LM)\\  \hline
+ \end{tabular}
+
+ \caption{Deciphering Accuracy}
+ \label{result}
+ \end{center}
+ \end{table}
+
+
+ Our algorithm improves the deciphering accuracy to 88.1\%, which amounts to 33\% reduction in error rate. Figure \ref{curve} is the learning curve of the algorithm. It takes 5hrs to complete 150k iterations. With 80k iterations, the deciphering accuracy has already reached 87.4\%.
+
+ \begin{figure}[!ht]
+  \centering
+
+  \includegraphics[width=3.5in]{curve}
+  \caption{Deciphering Accuracy v.s. Number of Iterations}
+\label{curve}
+\end{figure}
+
+\begin{table}
+  \begin{center}
+ \begin{tabular}{ |p{3.5cm} | p{3.5cm}| } \hline
+  Gold & Decoded \\ \hline
+   man i've come to file a complaint against some people . & man i've come to hand a telephone lines some people . \\ \hline
+   man they took our land . & man they took our farm . \\ \hline
+   they took our arable land . & they took our slide door . \\ \hline
+   okay man . & okay man . \\ \hline
+   eighty donums . & miflih donums . \\ \hline
+ \end{tabular}
+  \end{center}
+
+  \caption{Sample Decoding Results}
+  \label{sampledecode}
+ \end{table}
+
+ Table \ref{sampledecode} shows the first 5 decoding results and compares them with the gold plain text. From the table we can see that the algorithm recovered the majority of the plain text correctly. It is also interesting to find out that even the mistakes are sensible. For instance, ``land'' and ``farm'' are semantically similar words; ``complaint'' and ``telephone'' are both noun; both ``hand'' and ``file'' can be either noun or verb.
+ 
+ \subsection{Deciphering Gigaword Corpus}
+To prove the efficacy of our new approach, we apply it to solve a much larger word substitution cipher built from Gigaword corpus. 
+
+ %The primary reason that leads to deciphering error is data sparsity. It is difficult to decipher low frequency words. To demonstrate this, we evaluate type accuracy against frequency, which shows the percentage of word types that are deciphered correctly for types that have the same token frequency. Table \ref{typeacc} presents type accuracy for word types of different frequency. Accuracy for frequency 1 is not available as we eliminate all single count bi-grams before deciphering. From the table, we can see that the accuracy climbs as frequency increases and finally reaches 100\% for frequent word types.
+
+ %\begin{table}
+ % \begin{center}
+ %\begin{tabular}{ |c| c| } \hline
+ % Frequency & Accuracy \% \\ \hline
+ %   1       & N/A \\ \hline
+ %   2       & 0.4 \\ \hline
+ %   10      & 37.3 \\ \hline
+ %   20       & 80.0 \\ \hline
+ %   40       & 83.3 \\ \hline
+ %   50       & 100.0 \\ \hline
+ %   60       & 100.0 \\ \hline
+ %\end{tabular}
+ % \end{center}
+ % \caption{Type Accuracy by Frequency}
+ % \label{typeacc}
+ %\end{table}
+
+
+

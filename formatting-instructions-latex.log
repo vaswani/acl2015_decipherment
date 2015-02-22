@@ -1,0 +1,250 @@
+This is pdfTeX, Version 3.1415926-1.40.11 (MiKTeX 2.9) (preloaded format=latex 2011.4.26)  3 OCT 2011 19:44
+entering extended mode
+**formatting-instructions-latex.tex
+
+(C:\Users\Qing\Documents\research\non_parallel\paper\formatting-instructions-la
+tex.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, afrikaans, ancientgreek, ar
+abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
+croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
+lician, german, german-x-2009-06-19, greek, gujarati, hindi, hungarian, iceland
+ic, indonesian, interlingua, irish, italian, kannada, kurmanji, lao, latin, lat
+vian, lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerm
+an, ngerman-x-2009-06-19, nynorsk, oriya, panjabi, pinyin, polish, portuguese, 
+romanian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swis
+sgerman, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, u
+senglishmax, welsh, loaded.
+("C:\Program Files (x86)\mitex\tex\latex\base\article.cls"
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+("C:\Program Files (x86)\mitex\tex\latex\base\size10.clo"
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(C:\Users\Qing\Documents\research\non_parallel\paper\aaai.sty
+Conference Style for AAAI for LaTeX 2e -- version of 7 January 2011
+\titlebox=\skip43
+) ("C:\Program Files (x86)\mitex\tex\latex\psnfss\times.sty"
+Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
+)
+("C:\Program Files (x86)\mitex\tex\latex\psnfss\helvet.sty"
+Package: helvet 2005/04/12 PSNFSS-v9.2a (WaS) 
+
+("C:\Program Files (x86)\mitex\tex\latex\graphics\keyval.sty"
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+))
+("C:\Program Files (x86)\mitex\tex\latex\psnfss\courier.sty"
+Package: courier 2005/04/12 PSNFSS-v9.2a (WaS) 
+)
+pdfTeX warning (\pdfinfo): not allowed in DVI mode (\pdfoutput <= 0); ignoring 
+it
+No file formatting-instructions-latex.aux.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 13.
+("C:\Program Files (x86)\mitex\tex\latex\psnfss\ot1ptm.fd"
+File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+)
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 23.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <14.4> on input line 23.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 23.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 23.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 23.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 23.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 23.
+
+("C:\Program Files (x86)\mitex\tex\latex\psnfss\omsptm.fd"
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <9> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 23.
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 38.
+ [1
+
+
+
+]
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 89.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 89.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 89.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 89.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 93.
+ [2]
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <10.95> on input line 157.
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--179
+
+ []
+
+
+Underfull \hbox (badness 1281) in paragraph at lines 181--182
+[]\OT1/ptm/m/n/10 The fol-low-ing pack-ages are in-com-pat-i-ble with aaai.sty
+ []
+
+
+Underfull \hbox (badness 1558) in paragraph at lines 212--213
+\OT1/ptm/m/n/10 ics. Use \OMS/cmsy/m/n/10 n\OT1/ptm/m/n/10 centering in-stead o
+f \OMS/cmsy/m/n/10 n\OT1/ptm/m/n/10 begin\OMS/cmsy/m/n/10 f\OT1/ptm/m/n/10 cent
+er\OMS/cmsy/m/n/10 g \OT1/ptm/m/n/10 in your
+ []
+
+
+Underfull \hbox (badness 1521) in paragraph at lines 212--213
+\OT1/ptm/m/n/10 fig-ure en-vi-ron-ment. If these two meth-ods don't work,
+ []
+
+
+Underfull \hbox (badness 1571) in paragraph at lines 212--213
+\OT1/ptm/m/n/10 you may min-i-mally use the fol-low-ing. For floats (ta-
+ []
+
+
+Underfull \hbox (badness 1057) in paragraph at lines 212--213
+\OT1/ptm/m/n/10 math-e-mat-i-cal en-vi-ron-ments, you may min-i-mally re-duce
+ []
+
+
+Underfull \hbox (badness 1087) in paragraph at lines 212--213
+\OMS/cmsy/m/n/10 n\OT1/ptm/m/n/10 abovedisplayskip, \OMS/cmsy/m/n/10 n\OT1/ptm/
+m/n/10 belowdisplayskip, and \OMS/cmsy/m/n/10 n\OT1/ptm/m/n/10 arraycolsep.
+ []
+
+[3]
+Underfull \hbox (badness 2035) in paragraph at lines 214--215
+\OT1/ptm/m/n/10 in-clude \OMS/cmsy/m/n/10 n\OT1/ptm/m/n/10 columnsep, \OMS/cmsy
+/m/n/10 n\OT1/ptm/m/n/10 topmargin, \OMS/cmsy/m/n/10 n\OT1/ptm/m/n/10 topskip, 
+\OMS/cmsy/m/n/10 n\OT1/ptm/m/n/10 textheight,
+ []
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 229.
+
+Underfull \hbox (badness 1264) in paragraph at lines 229--231
+ \OT1/ptm/b/n/10 Ob-tain-ing Type 1 Com-puter Mod-ern for L[]T[]X. []\OT1/ptm/m
+/n/10 If
+ []
+
+
+Underfull \hbox (badness 1281) in paragraph at lines 229--231
+\OT1/ptm/m/n/10 pa-per (you can-not use it for the text) you may need
+ []
+
+
+Underfull \hbox (badness 1092) in paragraph at lines 282--285
+[]\OT1/ptm/m/n/10 If the ti-tle and au-thor in-for-ma-tion does not fit in the
+ []
+
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 287.
+
+("C:\Program Files (x86)\mitex\tex\latex\psnfss\ot1pcr.fd"
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+Underfull \hbox (badness 1231) in paragraph at lines 287--290
+[]\OT1/ptm/m/n/10 The copy-right no-tice au-to-mat-i-cally ap-pears if you use
+ []
+
+[4]
+Missing character: There is no Ò in font ptmr7t!
+Missing character: There is no Ó in font ptmr7t!
+
+Underfull \hbox (badness 3209) in paragraph at lines 338--339
+ \OT1/ptm/b/n/10 Sec-tion Head-ings. []\OT1/ptm/m/n/10 Sec-tions should be ar-r
+anged and
+ []
+
+
+Underfull \hbox (badness 1248) in paragraph at lines 341--342
+\OT1/ptm/m/n/10 ``Ac-knowl-edg-ments." This sec-tion in-cludes ac-knowl-edg-
+ []
+
+
+Underfull \hbox (badness 2158) in paragraph at lines 344--345
+ \OT1/ptm/b/n/10 Ap-pen-dices. []\OT1/ptm/m/n/10 Any ap-pen-dices fol-low the a
+c-knowl-edg-
+ []
+
+
+Underfull \hbox (badness 2035) in paragraph at lines 347--348
+ \OT1/ptm/b/n/10 Ref-er-ences []\OT1/ptm/m/n/10 The ref-er-ences sec-tion shoul
+d be la-beled
+ []
+
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 355--356
+ \OT1/ptm/b/n/10 Low-Resolution Bitmaps. []\OT1/ptm/m/n/10 You may not use low-
+
+ []
+
+
+Underfull \hbox (badness 5403) in paragraph at lines 355--356
+\OT1/ptm/m/n/10 resolution (such as 72 dpi) screen-dumps and GIF
+ []
+
+[6]
+Underfull \hbox (badness 10000) in paragraph at lines 461--465
+
+ []
+
+[7]
+Underfull \hbox (badness 1028) in paragraph at lines 518--519
+[]\OT1/ptm/m/n/10 L[]T[]X is a dif-fi-cult pro-gram to mas-ter. If you've used
+ []
+
+
+Underfull \hbox (badness 1389) in paragraph at lines 518--519
+\OT1/ptm/m/n/10 that soft-ware, and this doc-u-ment didn't help or some
+ []
+
+
+Underfull \hbox (badness 1087) in paragraph at lines 518--519
+\OT1/ptm/m/n/10 2002/08/13) about ob-tain-ing cor-rect PS/PDF out-put on
+ []
+
+[8]
+(C:\Users\Qing\Documents\research\non_parallel\paper\formatting-instructions-la
+tex.aux) ) 
+Here is how much of TeX's memory you used:
+ 425 strings out of 494054
+ 5941 string characters out of 3148226
+ 59349 words of memory out of 3000000
+ 3763 multiletter control sequences out of 15000+200000
+ 15928 words of font info for 45 fonts, out of 3000000 for 9000
+ 715 hyphenation exceptions out of 8191
+ 23i,10n,20p,976b,242s stack positions out of 5000i,500n,10000p,200000b,50000s
+
+Output written on formatting-instructions-latex.dvi (8 pages, 71468 bytes).

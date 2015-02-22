@@ -1,0 +1,19 @@
+\section{Introduction}
+State-of-the-art machine translation (MT) systems apply statistical techniques to learn translation rules from large amounts of parallel data. However, in reality, the amount of parallel data is limited for many language pairs and domains.
+
+In general, it is easier to obtain non-parallel monolingual data. Is it possible to use large amounts of non-parallel data to either induce a full translation system or improve one learned from limited parallel data?  Towards building a machine translation system without a parallel corpus, \newcite{klementiev2012} use non-parallel data to estimate parameters for a large scale MT system. However, their method assumes that a phrase table is given. Other work tries to learn MT systems using non-parallel data through decipherment\cite{ravi-knight:2011}. However, the performance of such systems is poor. Motivated by the idea that a translation lexicon induced from non-parallel data can be applied to MT, a variety of prior work has tried to build a bilingual lexicon from non-parallel data \cite{Rapp:1995,Koehn:2002:LTL:1118627.1118629,haghighi-EtAl:2008:ACLMain,Garera:2009,Bergsma:2011}. But few work has used lexicons learned from genuinely non-parallel data to improve machine translation.
+
+There has been increasing interest in learning translation lexicons from non-parallel data with decipherment techniques \cite{,Nuhn:2012,Dou:2012}. Decipherment views one language as a cipher for another and learns a translation lexicon that produces good decipherment. \newcite{Dou:2012} successfully apply decipherment to learn a domain specific translation lexicon from monolingual data to improve out-of-domain machine translation. Although their approach works well for deciphering Spanish into French, they are not able to show whether their approach works for other language pairs. Moreover, the non-parallel data used in their experiments is created by selecting the first half of Spanish side and the second half of French side from a Spanish-French parallel corpus. Such highly comparable is difficult to obtain in reality.
+
+In this work, we improve previous work by \newcite{Dou:2012} for deciphering Spanish into English, and we use genuinely non-parallel data. The main contributions of this work are:
+
+\begin{itemize}
+\item Unlike \newcite{Dou:2012}, who use adjacent bigrams for decipherment, we extract bigrams based on dependency relations. Experimental results show that using dependency bigrams improves deciphering accuracy by 500\%.
+
+\item For the first time, we demonstrate that it is possible to improve translations of words observed in parallel data by using a translation lexicon obtained from decipherment of large amounts of non-parallel data.
+
+\item Moreover, we use decipherment to find useful translations for a number of OOV words and use them to further improve machine translation.
+
+\item We decipher large amounts of Spanish news texts into English, and learn a translation table from the decipherment to improve a phrase-based MT system trained on a limited amount of parallel data in political domain. In experiments, we obtain 1.2 to 1.8 BLEU gain across three test sets.
+\end{itemize}
+

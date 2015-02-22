@@ -1,0 +1,55 @@
+\section{Previous Work}
+There has been increasing interest in learning translation lexicons from non parallel data with decipherment techniques \cite{ravi-knight:2011,Dou:2012,Nuhn:2012}. Decipherment views one language as a cipher for another and learns a translation lexicon that produces a good decipherment.
+
+In an effort to build a MT system without a parallel corpus, \newcite{ravi-knight:2011} view Spanish as a cipher for English and apply Bayesian learning to directly decipher Spanish into English. Unfortunately, their approach can only work on small data with limited vocabulary. \newcite{Dou:2012} propose two techniques to make Bayesian decipherment scalable.
+
+First, unlike \newcite{ravi-knight:2011}, who decipher whole sentences, \newcite{Dou:2012} decipher bigrams. Reducing a ciphertext to a set of bigrams with counts significantly reduces the amount of cipher data. According to \newcite{Dou:2012}, a ciphertext bigram $F$ is generated through the following generative story:
+
+\begin{itemize}
+\item  Generate a sequence of two plaintext tokens $e_{1}e_{2}$ with probability $P(e_{1}e_{2})$ given by a language model built from large numbers of plaintext bigrams.
+\item  Substitute $e_{1}$ with $f_{1}$ and $e_{2}$ with $f_{2}$ with probability $P(f_{1}|e_{1}) \cdot P(f_{2}|e_{2})$.
+\end{itemize}
+
+The probability of any cipher bigram $F$ is:
+%
+\[
+\label{p_cipher}
+P(F) =  \sum_{e_{1}e_{2}} P(e_{1}e_{2}) \prod_{i=1}^{2}P(f_{i}|e_{i})
+\]
+%
+
+Given a corpus of $N$ cipher bigrams $F_{1}...F_{N}$, the probability of the corpus is:
+%
+\[
+\label{p_corpus}
+P(corpus) =  \prod_{j=1}^{N} P(F_{j})
+\]
+%
+
+Given a plaintext bigram language model, the goal is to manipulate $P(f|e)$ to maximize $P(corpus)$. Theoretically, one can directly apply EM to solve the problem \cite{knight-EtAl:2006}. However, EM has time complexity $O( N\cdot V_{e}^{2})$ and space complexity $O(V_{f}\cdot V_{e})$, where $V_{f}$, $V_{e}$ are the sizes of ciphertext and plaintext vocabularies respectively, and $N$ is the number of cipher bigrams.
+%Unfortunately, EM is not scalable when $V_{f}$, $V_{e}$, and $N$ are very large.
+
+\newcite{ravi-knight:2011} apply Bayesian learning to reduce the space complexity. Instead of estimating probabilities $P(f|e)$, Bayesian learning tries to draw samples from plaintext sequences given ciphertext bigrams. During sampling, the probability of any possible plaintext sample $e_{1}e_{2}$ is given as:
+%
+\[
+\label{p_sample}
+P_{sample}(e_{1}e_{2}) =  P(e_{1}e_{2}) \prod_{i=1}^{2}P_{CRP}(f_{i}|e_{i})
+\]
+%
+with $P_{CRP}(f_{i}|e_{i})$ defined as:
+%
+\[
+\label{p_channel}
+P_{CRP}(f_{i}|e_{i}) = \frac{\alpha P_0(f_{i}|e_{i})+count(f_{i},e_{i})}{\alpha+count(e_{i})}
+\]
+%
+where $P_{0}$ is a base distribution, and $\alpha$ is a parameter that controls how much we trust $P_{0}$. $count(f_{i},e_{i})$ and $count(e_{i})$ record the number of times $f_{i},e_{i}$ and $e_{i}$ appear in previously generated samples respectively.
+
+At the end of sampling, $P(f_{i}|e_{i})$ is estimated by:
+
+\[
+\label{mlh_estimation}
+P(f_{i}|e_{i}) =  \frac{count(f_{i},e_{i})}{count(e_{i})}
+\]
+
+However, Bayesian decipherment is still very slow with Gibbs sampling \cite{Geman:1987:SRG:33517.33564}, as each sampling step requires considering $V_{e}$ possibilities. \newcite{Dou:2012} solve the problem by introducing slice sampling \cite{Neal00slicesampling} to Bayesian decipherment. 

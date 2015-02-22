@@ -1,0 +1,45 @@
+\section{Decipherment Experiments}
+In this section, we present experiment results from deciphering Spanish into English. We first evaluate deciphering accuracy, then we give some sample decipherment, in the end, we use the decipherment results to convert Spanish texts into English.
+
+\subsection{Data}
+
+We work with Gigaword corpus. The corpus contains news articles from different news agencies. It has both Spanish and English versions. We use only the AFP section of the corpus (news articles from AFP). The subset of the corpus contains approximately 240 million words in Spanish and 350 millon words in English. 
+
+ We split the corpus into two parts chronologically. Each part contains approximately 1.2 billion tokens. We uses the first part to build a word substitution cipher, which is 10k times longer than the one in the previous experiment, and the second part to build a bigram language model. \footnote{Before building the language model, we replace low frequency word types with an "UNK" symbol, leaving 129k unique word types.}
+
+
+\subsubsection{Results}
+We first use a single machine and apply iterative sampling to solve a 68 million token cipher. Then we use the result from the first step to initialize our parallel sampling process, which uses as many as 100 machines. For evaluation, we calculate deciphering accuracy over the first 1000 sentences (33k tokens).
+
+After 2000 iterations of the parallel sampling process, the deciphering accuracy reaches 92.2\%. Figure \ref{curve} shows the learning curve of the algorithm. It can be seen from the graph that both token and type accuracy increase as more and more data becomes available.
+
+ \begin{figure}[!ht]
+  \centering
+
+  \includegraphics[width=3.3in,height=2.5in]{curve_giga}
+  \caption{Learning curve for a very large word substitution cipher: Both token and type accuracy rise as more and more ciphertext becomes available.}
+\label{curve}
+\end{figure}
+
+
+ %The primary reason that leads to deciphering error is data sparsity. It is difficult to decipher low frequency words. To demonstrate this, we evaluate type accuracy against frequency, which shows the percentage of word types that are deciphered correctly for types that have the same token frequency. Table \ref{typeacc} presents type accuracy for word types of different frequency. Accuracy for frequency 1 is not available as we eliminate all single count bi-grams before deciphering. From the table, we can see that the accuracy climbs as frequency increases and finally reaches 100\% for frequent word types.
+
+ %\begin{table}
+ % \begin{center}
+ %\begin{tabular}{ |c| c| } \hline
+ % Frequency & Accuracy \% \\ \hline
+ %   1       & N/A \\ \hline
+ %   2       & 0.4 \\ \hline
+ %   10      & 37.3 \\ \hline
+ %   20       & 80.0 \\ \hline
+ %   40       & 83.3 \\ \hline
+ %   50       & 100.0 \\ \hline
+ %   60       & 100.0 \\ \hline
+ %\end{tabular}
+ % \end{center}
+ % \caption{Type Accuracy by Frequency}
+ % \label{typeacc}
+ %\end{table}
+
+
+

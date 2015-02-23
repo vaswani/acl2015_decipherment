@@ -3,13 +3,13 @@ In this section, we describe the decipherment model, upon which this work is bui
 
 Unsupervised learning of translations from non-parallel is an old and challenging problem. In recent years, there has been growing interests in approaching it using decipherment techniques. \newcite{ravi-knight:2011} built an MT system using only non parallel data for translating movie subtitles. \newcite{Dou:2012} and \newcite{Nuhn:2012} made decipherment scalable to handle larger vocabulary. \newcite{dou-knight:2013:EMNLP} improved decipherment accuracy significantly by using dependency information between words. 
 
-Throughout this paper, we use $f$ to denote target language or ciphertext tokens, and $e$ to denote source language or plaintext tokens. Given ciphertext $\mathbf{\cipher}:f_{1}...f_{n}$, the task of decipherment is to find a set of parameters $P(f_{i}|e_{i})$ that convert $F$ to sensible plaintext. The ciphertext $F$ can either be full sentences \cite{ravi-knight:2011,Nuhn:2012} or simply bigrams \cite{dou-knight:2013:EMNLP}. Since using bigrams and their counts significantly speeds up decipherment, in this work, we also see the data as bigrams, where $ \mathbf{\cipher} = \{ \mathbf{\cipher}^n \}_{n=1}^{N} = \{ \cipher_1^n,\cipher_2^n \}_{n=1}^{N} $. 
+Throughout this paper, we use $f$ to denote target language or ciphertext tokens, and $e$ to denote source language or plaintext tokens. Given ciphertext $\mathbf{\cipher}:f_{1}...f_{n}$, the task of decipherment is to find a set of parameters $P(f_{i}|e_{i})$ that convert $F$ to sensible plaintext. The ciphertext $F$ can either be full sentences \cite{ravi-knight:2011,Nuhn:2012} or simply bigrams \cite{dou-knight:2013:EMNLP}. Since using bigrams and their counts significantly speeds up decipherment, in this work, we also see observed the data as bigrams, where $ \mathbf{\cipher} = \{ \mathbf{\cipher}^n \}_{n=1}^{N} = \{ \cipher_1^n,\cipher_2^n \}_{n=1}^{N} $. 
 
-Motivated by the idea from \newcite{Weaver:1955}, we model a ciphertext bigram $\mathbf{\cipher}^n$ with the following generative story:
+Motivated by the idea from \newcite{Weaver:1955}, we model a generate an observed bigram $\mathbf{\cipher}^n$ with the following generative story:
 
 \begin{itemize}
-\item  First, a languae model $P(E)$ generates a sequence of two plaintext tokens $e_{1},e_{2}$ with probability $P(e_{1},e_{2})$.
-\item  Then, substitute $\plain_{1}$ with $\cipher_{1}^n$ and $\plain_{2}$ with $\cipher_{2}^n$ with probability $P(\cipher_{1}^n \mid e_{1}) \cdot P(f_{2}^n \mid e_{2})$.
+\item  First, a languae model $P(\mathbf{\plain})$ generates a sequence of two plaintext tokens $e_{1}^n,e_{2}^n$ with probability $P(e_{1}^n,e_{2}^n)$.
+\item  Then, substitute $\plain_{1}^n$ with $\cipher_{1}^n$ and $\plain_{2}^n$ with $\cipher_{2}^n$ with probability $P(\cipher_{1}^n \mid e_{1}^n) \cdot P(f_{2}^n \mid e_{2}^n)$.
 \end{itemize}
 
 Based on the above generative story, the probability of any cipher bigram $\mathbf{\cipher^n}$ is:
@@ -24,12 +24,13 @@ Let the entire ciphertext corpus contains $N$ such bigrams $F_{1}...F_{N}$, we w
 %
 \[
 \label{p_corpus}
-P(corpus) =  \prod_{n=1}^{N} P(\mathbf{\cipher}^{n})
+P( \{ \mathbf{\cipher}^n \}_{n=1}^{N} ) =  \prod_{n=1}^{N} P(\mathbf{\cipher}^{n})
 \]
 %
 
-There are two sets of parameters in the model: the channel probabilities, $P(\cipher \mid \plain)$, and the bigram language model probabilities $P(\plain' \mid \plain)$. Given a plaintext bigram language model, the training objective is to learn $P(\cipher \mid \plain)$ that maximize $P(corpus)$. When formulated like this, one can directly apply EM to solve the problem \cite{knight-EtAl:2006}. However, EM has time complexity $O( N\cdot V_{e}^{2})$ and space complexity $O(V_{f}\cdot V_{e})$, where $V_{f}$, $V_{e}$ are the sizes of ciphertext and plaintext vocabularies respectively, and $N$ is the number of cipher bigrams. This makes the EM approach unable to handle long ciphertext with large vocabulary size. 
+There are two sets of parameters in the model: the channel probabilities, \{ $P(\cipher \mid \plain) \} $, and the bigram language model probabilities $\{ P(\plain' \mid \plain) \} $, where $\cipher$ ranges over the ciphertext vocabulary and $\plain,\plain'$ range over the plaintext vocabulary. Given a plaintext bigram language model, the training objective is to learn $P(\cipher \mid \plain)$ that maximize $P( \{ \mathbf{\cipher}^n \}_{n=1}^{N} )$. When formulated like this, one can directly apply EM to solve the problem \cite{knight-EtAl:2006}. However, EM has time complexity $O( N\cdot V_{e}^{2})$ and space complexity $O(V_{f}\cdot V_{e})$, where $V_{f}$, $V_{e}$ are the sizes of ciphertext and plaintext vocabularies respectively, and $N$ is the number of cipher bigrams. This makes the EM approach unable to handle long ciphertext with large vocabulary size. 
 %Unfortunately, EM is not scalable when $V_{f}$, $V_{e}$, and $N$ are very large.
+%$\cipher \in 1,\ldots,V_{\plain}$ and $\plain, \plain' \in 1,\ldots,V_e$
 
 An alternative approach to solve the problem is to apply Bayesian inference \cite{ravi-knight:2011,Dou:2012}. We assume that $P(\cipher \mid \plain)$ and $P(\plain' \mid \plain)$ are drawn from a Dirichet distribution with hyper-parameters $\alpha_{\cipher,\plain}$ and $\alpha_{\plain,\plain'}$, that is: 
 
@@ -40,10 +41,9 @@ P(\plain \mid \plain') & \sim Dirichlet(\alpha_{\plain,\plain'}).
 %P(C=1 \mid x) &= \frac{\frac{n}Z p(x)}{\frac{n}Z p(x) + k q(x)}
 \end{align*}
 
-The remainder of the generative story is the same as the noisy channel model for decipherment. The joint likelihood of the complete data, 
-
+The remainder of the generative story is the same as the noisy channel model for decipherment. The joint likelihood of the complete data and the parameters is defined as:
 \begin{equation}
-blah
+P( \{ \mathbf{\cipher}^n , \mathbf{\plain}^n \}_{n=1}^{N}, \{ P(\cipher \mid \plain) \}, \{ P(\plain \mid \plain') \} \mid \alpha_{\cipher,\plain}, \alpha_{\plain,\plain'} )
 \end{equation}
 
 Bayesian decipherment still uses the same generative story described previously. However, in Bayeisan decipherment, we no longer search for parameters $P(f|e)$ that maximize the observed ciphertext. Instead, we draw samples from plaintext sequences given the ciphertext. During sampling, the probability of any possible plaintext sample $e_{1}e_{2}$ is computed using Equality \ref{p_sample}:

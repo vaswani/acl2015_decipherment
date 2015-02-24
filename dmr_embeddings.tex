@@ -3,10 +3,44 @@ As shown in the previous section, the base distribution in Bayesian decipherment
 
 One straightforward way is to consider orthographic similarities. This is true for close related languages. For instance, English word ``new'' is translated as ``neu'' in German, and ``nueva'' in Spanish. However, this fails when two languages are not close related, such as Chinese and English. There is a number of previous work that tries to discover translations from comparable data based on word context similarities. This is based on the assumption that words appear in similar context have similar meanings. The approach works very well in monolingual settings. However, when it comes to finding translations, one of the challenges is to draw a mapping between two different context space. In previous work, the mapping is usually learned from a seed lexicon.
 
-More recently, there has been much work in learning distributional vectors for words, or word \emph{embeddings}. The most popular among these is those learned by the skip-gram and continuous-bag-of-words models~\cite{mikolov2013efficient}. In~\cite{mikolov2013distributed}, the authors were successfully able to learn word translations using linear transformations between the source and target word vector-spaces. However, unlike our learning setting, their approach relied on large amounts of translation pairs learned from \emph{parallel} data to train their linear transformations. Inspired by these approaches, we would like to exploit high quality word embeddings to help learn better posterior distributions in unsupervised decipherment. 
+More recently, there has been much work in learning distributional vectors for words, or word \emph{embeddings}. The most popular among these is those learned by the skip-gram and continuous-bag-of-words models~\cite{mikolov2013efficient}. In~\cite{mikolov2013exploiting}, the authors were successfully able to learn word translations using linear transformations between the source and target word vector-spaces. However, unlike our learning setting, their approach relied on large amounts of translation pairs learned from \emph{parallel} data to train their linear transformations. Inspired by these approaches, we would like to exploit high quality word embeddings to help learn better posterior distributions in unsupervised decipherment. 
 
-In the previous section, we set $\alpha_{\plain,\plain'}$ to to use our pre-trained language model. In the same vein, Following \cite{mimno2012topic}, we will first derive the complete data log likelihood for our model and then present the steps of our stochastic EM algorithm. For a particular ciphertext and plaintext bigram, For an english word $\word{e}$, 
+In the previous section, we incorporated our pre-trained language mode in $\alpha_{\plain,\plain'}$ to steer our sampling. In the same vein, we will model $\alpha_{\plain,\cipher}$ using pre-trained word embeddings, enabling us to improve our estimate of the posterior distribution. In~\cite{mimno2012topic}, the authors develop topic models where the base distribution over topics is a log linear model of observed document features, allowing them to learn better priors over topic distributions for each document. Similarly, we define
+
+\begin{equation}
+\alpha_{\cipher,\plain} = \exp \{ v_{\plain}  M  v_{\cipher}^T \},
+\end{equation}
+
+where $v_{\plain}$ and $v_{\cipher}$ are the pre-trained plaintext word and ciphertex word embeddings, and $M$ is the similarity matrix between the two embedding spaces. $\alpha_{\cipher,\plain}$ can be thought of as the affinity of a plaintext word to be mapped to a ciphertext word. Rewriting the channel part of the joint likelihood in equation~\ref{joint_likelihood}, 
+
+\begin{align*}
+&P( \{ \mathbf{\cipher}^n \mid \mathbf{\plain}^n \}_{n=1}^{N}, \{ P(\cipher \mid \plain) \})  \\
+&=\prod_{\plain}  \frac{\dirgamma{\sum_{\cipher} \exp \{ v_{\plain}  M  v_{\cipher}^T \} }} {\prod_{\cipher} \dirgamma{\exp \{ v_{\plain}  M  v_{\cipher}^T \}}} \\
+& \prod_{\cipher} P(\cipher \mid \plain)^{\#(\plain,\cipher)+ \exp \{ v_{\plain}  M  v_{\cipher}^T \} -1} 
+\end{align*}
+
+Integrating out the channel probabilities, the complete data log likelihood of the observed ciphertext bigrams and the sampled plaintext bigrams,
+\begin{align}
+&P( \{ \mathbf{\cipher}^n \mid \mathbf{\plain}^n \} \\
+&= \prod_{\plain}  \frac{\dirgamma{\sum_{\cipher} \exp \{ v_{\plain}  M  v_{\cipher}^T \} }} {\prod_{\cipher} \dirgamma{\exp \{ v_{\plain}  M  v_{\cipher}^T \}}} \\
+& \prod_{\plain}  \frac{\prod_{\cipher} \dirgamma{\exp \{ v_{\plain}  M  v_{\cipher}^T \} + \#(\plain,\cipher)}} {\dirgamma{\sum_{\cipher} \exp \{ v_{\plain}  M  v_{\cipher}^T \} + \#(\plain)}}.
+\end{align}
+
+The derivative of the $\log$ of $P( \{ \mathbf{\cipher}^n \mid \mathbf{\plain}^n \}$ with respect to $M$, 
+\begin{align}
+&\frac {\partial \log P( \{ \mathbf{\cipher}^n \mid \mathbf{\plain}^n \}}{\partial M}  \\
+& = \sum_{\plain}  \sum_{\cipher} \exp \{ v_{\plain}  M  v_{\cipher}^T \}  v_{\cipher} v_{\plain}^T \bigl( \\
+& \dirdigamma{\sum_{\cipher'} \exp \{ v_{\plain}  M  v_{\cipher'}^T \}} - \\
+& \dirdigamma{\sum_{\cipher'} \exp \{ v_{\plain}  M  v_{\cipher'}^T \} + \#(\plain)}  + \\
+& + \dirdigamma{\exp \{ v_{\plain}  M  v_{\cipher}^T \} + \#(\plain,\cipher)} - \\
+& \dirdigamma{exp \{ v_{\plain}  M  v_{\cipher}^T \}}, 
+\end{align}
+
+where $\dirdigamma{\cdot}$ is the Digamma function, the derivative of the $\log \dirgamma{\cdot}$. Again, following~\cite{mimno2012topic}, we train the similarity matrix $M$ with stochastic EM. In the E-step, we sample plaintext words for the observed ciphertext using equation~\ref{prob_sampling_plaintext} and in the M-step, we learn $M$ that maximizes $\log P( \{ \mathbf{\cipher}^n \mid \mathbf{\plain}^n \}$ with stochastic gradient descent. 
+
+\iffalse
+we will first derive the complete data log likelihood for our model and then present the steps of our stochastic EM algorithm. For a particular ciphertext and plaintext bigram, For an english word $\word{e}$, 
 
 We adopt the approach based on word context similarities to learn a better base distribution. However, our work is different from previous approach in the following ways: First, our work does not rely on any seed lexicon to learn the mapping between word context vectors, rather, it uses the results from sampling. Second, the mapping is not always fixed, but becomes better as the sampling process progresses. Last, but not least, the base distribution derived from the mapping and word contexts is used to improve decipherment.
-
+\fi
 

@@ -42,11 +42,13 @@ P(\plain \mid \plain') & \sim Dirichlet(\alpha_{\plain,\plain'}).
 \end{align*}
 
 The remainder of the generative story is the same as the noisy channel model for decipherment. In the next section, we shall describe how we learn the hyper parameters of the Dirichlet prior. Given $\alpha_{\cipher,\plain}$ and $\alpha_{\plain,\plain'}$, The joint likelihood of the complete data and the parameters,
-\begin{align*}
-P( \{ \mathbf{\cipher}^n , \mathbf{\plain}^n \}_{n=1}^{N}, \{ P(\cipher \mid \plain) \}, \{ P(\plain \mid \plain') \} ) = & \\
- \prod_{\plain}  \frac{\dirgamma{\sum_{\cipher} \alpha_{\cipher,\plain}}} {\prod_{\cipher} \dirgamma{\alpha_{\plain,\cipher}}} \prod_{\cipher} P(\cipher \mid \plain)^{\#(\plain,\cipher)+\alpha_{\plain,\cipher}-1}  \times & \\
-  \prod_{\plain}  \frac{\dirgamma{\sum_{\plain'} \alpha_{\plain,\plain'}}} {\prod_{\plain'} \dirgamma{\alpha_{\plain,\plain'}}} \prod_{\cipher} P(\plain \mid \plain')^{\#(\plain,\plain')+\alpha_{\plain,\plain'}-1}  &, 
-\end{align*}
+\begin{align} \label{joint_likelihood}
+&P( \{ \mathbf{\cipher}^n , \mathbf{\plain}^n \}_{n=1}^{N}, \{ P(\cipher \mid \plain) \}, \{ P(\plain \mid \plain') \} )  \notag \\
+ &= P( \{ \mathbf{\cipher}^n \mid \mathbf{\plain}^n \}_{n=1}^{N}, \{ P(\cipher \mid \plain) \}) \notag \\
+     &P(  \{  \mathbf{\plain}^n \}_{n=1}^{N},P(\plain \mid \plain')) \notag \notag \\
+ &= \prod_{\plain}  \frac{\dirgamma{\sum_{\cipher} \alpha_{\cipher,\plain}}} {\prod_{\cipher} \dirgamma{\alpha_{\plain,\cipher}}} \prod_{\cipher} P(\cipher \mid \plain)^{\#(\plain,\cipher)+\alpha_{\plain,\cipher} -1}  \notag \\
+  &\prod_{\plain}  \frac{\dirgamma{\sum_{\plain'} \alpha_{\plain,\plain'}}} {\prod_{\plain'} \dirgamma{\alpha_{\plain,\plain'}}} \prod_{\cipher} P(\plain \mid \plain')^{\#(\plain,\plain')+\alpha_{\plain,\plain'} -1} , 
+\end{align}
 
 where $\#(\plain,\cipher)$ and $\#(\plain,\plain')$ are the counts of the translated word pairs and plaintext bigram pairs in the complete data, and $\dirgamma{\cdot}$ is the Gamma function. Unlike EM, in Bayeisan decipherment, we no longer search for parameters $P(\cipher \mid \plain)$ that maximize the likelihood of the observed ciphertext. Instead, we draw samples from posterior distribution of the plaintext sequences given the ciphertext. Under the above Bayesian decipherment model, we can show that the probability of a particular cipher word $\cipher_{j}$ having a value $k$, given the current plaintext word, and $\mathbf{\cipher}_{-j}$ and $\mathbf{\plain}_{-j}$, the samples for all the other plaintext and ciphertext words, 
 

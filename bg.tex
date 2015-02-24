@@ -48,17 +48,35 @@ P( \{ \mathbf{\cipher}^n , \mathbf{\plain}^n \}_{n=1}^{N}, \{ P(\cipher \mid \pl
   \prod_{\plain}  \frac{\dirgamma{\sum_{\plain'} \alpha_{\plain,\plain'}}} {\prod_{\plain'} \dirgamma{\alpha_{\plain,\plain'}}} \prod_{\cipher} P(\plain \mid \plain')^{\#(\plain,\plain')+\alpha_{\plain,\plain'}-1}  &, 
 \end{align*}
 
-where $\#(\plain,\cipher)$ and $\#(\plain,\plain')$ are the counts of the translated word pairs and plaintext bigram pairs in the complete data. Unlike EM, in Bayeisan decipherment, we no longer search for parameters $P(\cipher \mid \plain)$ that maximize the likelihood of the observed ciphertext. Instead, we draw samples from posterior distribution of the plaintext sequences given the ciphertext. Under the above Bayesian decipherment model, we can show that the probability of a particular cipher word $\cipher_{j}$ having a value $k$, given the current plaintext word, and $\mathbf{\cipher}_{-j}$ and $\mathbf{\plain}_{-j}$, the samples for all the other plaintext and ciphertext words, 
-\begin{equation*}
-P(\cipher_j = k \mid \plain_j,\mathbf{\cipher}_{-j}, \mathbf{\plain}_{-j}) = \frac{\#(k, \plain_j) + \alpha_{\plain_j,k}}{\#(\plain_j)+\sum_{\cipher} \alpha_{\plain_j,\cipher}}.
-\end{equation*}
+where $\#(\plain,\cipher)$ and $\#(\plain,\plain')$ are the counts of the translated word pairs and plaintext bigram pairs in the complete data, and $\dirgamma{\cdot}$ is the Gamma function. Unlike EM, in Bayeisan decipherment, we no longer search for parameters $P(\cipher \mid \plain)$ that maximize the likelihood of the observed ciphertext. Instead, we draw samples from posterior distribution of the plaintext sequences given the ciphertext. Under the above Bayesian decipherment model, we can show that the probability of a particular cipher word $\cipher_{j}$ having a value $k$, given the current plaintext word, and $\mathbf{\cipher}_{-j}$ and $\mathbf{\plain}_{-j}$, the samples for all the other plaintext and ciphertext words, 
 
-Similarly, the probability of a plaintext word taking a value $l$ given samples for all other plaintext words, 
-
-\begin{equation}
+\begin{equation} \label{prob_bayes_ciphertext}
+P(\cipher_j = k \mid \plain_j,\mathbf{\cipher}_{-j}, \mathbf{\plain}_{-j}) = \frac{\#(k, \plain_j)_{-j} + \alpha_{\plain_j,k}}{\#(\plain_j)_{-j}+\sum_{\cipher} \alpha_{\plain_j,\cipher}}.
 \end{equation}
 
-During sampling, the probability of any possible plaintext sample $e_{1}e_{2}$ is computed using Equality \ref{p_sample}:
+Where, $\#(k, \plain_j)_{-j}$ and $\#(\plain_j)_{-j}$ are the counts of the ciphertext, plaintext word pair and plaintext word in the samples excluding $\cipher_j$ and $\plain_j$. Similarly, the probability of a plaintext word $\plain_j$ taking a value $l$ given samples for all other plaintext words, 
+\begin{equation} \label{prob_bayes_plaintext}
+P(\plain_j = l \mid \mathbf{\plain}_{-j}) = \frac{\#(l, \plain_{j-1})_{-j} + \alpha_{l,\plain_{j-1}}} {\#(\plain_{j-1})_{-j} + \sum_{\plain} \alpha_{\plain,\plain_{j-1}}}.
+\end{equation}
+
+
+%\begin{equation}
+%\end{equation}
+
+Since we have large amounts of plaintext data, we can train a high quality bigram language model, $P_{LM}(\plain \mid \plain')$ and use it to guide our samples and learn a better posterior distribution. For that, we define $\alpha_{\plain,\plain'} = \alpha P_{LM}(\plain \mid \plain')$, and set $\alpha$ to be very high. The probability of a plaintext word (Equation~\ref{prob_bayes_plaintext}) is now
+
+\begin{equation} \label{prob_bayes_plaintext_lm}
+P(\plain_j = l \mid \mathbf{\plain}_{-j}) \approx P_{LM}(l \mid \plain_{j-1}).
+\end{equation}
+
+\marginpar{We have to say that in previous work , $\alpha_{\plain,\cipher}$ has been set to $\alpha * uniform$}. To sample from the posterior, we iterate over the observed ciphertext bigram tokens and use equations~\ref{prob_bayes_ciphertext} and~\ref{prob_bayes_plaintext_lm} to sample a plaintext token with probability
+
+\begin{align*}
+P( \plain_j \mid \mathbf{\plain}_{-j}, \mathbf{\cipher} ) \propto & P_{LM}(\plain_j \mid \plain_{j-1}) \times \\
+                                                                                                & P(\cipher_j \mid \plain_j,\mathbf{\cipher}_{-j}, \mathbf{\plain}_{-j}).
+\end{align*}
+
+\iffalse
 %
 \[
 \label{p_sample}
@@ -73,19 +91,15 @@ P_{CRP}(f_{i}|e_{i}) = \frac{\alpha P_0(f_{i}|e_{i})+count(f_{i},e_{i})}{\alpha+
 \]
 %
 where $P_{0}$ is a base distribution, also known as a prior, and $\alpha$ is a parameter that controls how much we trust the base distribution. $count(f_{i},e_{i})$ and $count(e_{i})$ record the number of times $f_{i},e_{i}$ and $e_{i}$ appear in previously generated samples respectively. The base distribution is given independently, and in all the previous work, it is set to uniform.
+\fi
 
-At the end of sampling, we compute $P(f_{i}|e_{i})$ from ciphertext and its plaintext samples using maximum likelihood estimation:
+At the end of sampling, we compute $P(\cipher \mid \plain)$ from ciphertext and its plaintext samples using maximum likelihood estimation:
 
 \[
 \label{mlh_estimation}
-P(f_{i}|e_{i}) =  \frac{count(f_{i},e_{i})}{count(e_{i})}
+P(\cipher \mid \plain) =  \frac{\#(\cipher,\plain)}{\#(\plain)}.
 \]
 
-\section{Model Base Distribution with Word Context Similarities}
-As shown in the previous section, the base distribution in Bayesian decipherment is given independent of the inference process. The easiest thing to do is to set it to uniform, which is the approach taken by all previous Bayesian decipherment work. We argue that a better base distribution can improve decipherment accuracy. Ideally, we should assign higher base distribution probabilities to word pairs that are similar.
+In the next section, we will describe how we model and learn an appropriate base distribution for $P(\cipher \mid \plain)$.
 
-One straightforward way is to consider orthographic similarities. This is true for close related languages. For instance, English word ``new'' is translated as ``neu'' in German, and ``nueva'' in Spanish. However, this fails when two languages are not close related, such as Chinese and English.
 
-There is a number of previous work that tries to discover translations from comparable data based on word context similarities. This is based on the assumption that words appear in similar context have similar meanings. The approach works very well in monolingual settings. However, when it comes to finding translations, one of the challenges is to draw a mapping between two different context space. In previous work, the mapping is usually learned from a seed lexicon.
-
-We adopt the approach based on word context similarities to learn a better base distribution. However, our work is different from previous approach in the following ways: First, our work does not rely on any seed lexicon to learn the mapping between word context vectors, rather, it uses the results from sampling. Second, the mapping is not always fixed, but becomes better as the sampling process progresses. Last, but not least, the base distribution derived from the mapping and word contexts is used to improve decipherment.

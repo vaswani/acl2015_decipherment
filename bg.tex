@@ -32,7 +32,7 @@ There are two sets of parameters in the model: the channel probabilities, \{ $P(
 %Unfortunately, EM is not scalable when $V_{f}$, $V_{e}$, and $N$ are very large.
 %$\cipher \in 1,\ldots,V_{\plain}$ and $\plain, \plain' \in 1,\ldots,V_e$
 
-An alternative approach to solve the problem is Bayesian inference \cite{ravi-knight:2011,Dou:2012}. We assume that $P(\cipher \mid \plain)$ and $P(\plain' \mid \plain)$ are drawn from a Dirichet distribution with hyper-parameters $\alpha_{\cipher,\plain}$ and $\alpha_{\plain,\plain'}$, that is: 
+An alternative approach to solve the problem is Bayesian inference \cite{ravi-knight:2011}. We assume that $P(\cipher \mid \plain)$ and $P(\plain' \mid \plain)$ are drawn from a Dirichet distribution with hyper-parameters $\alpha_{\cipher,\plain}$ and $\alpha_{\plain,\plain'}$, that is: 
 
 \begin{align*}
 P(\cipher \mid \plain) & \sim Dirichlet(\alpha_{\cipher,\plain}) \\ 

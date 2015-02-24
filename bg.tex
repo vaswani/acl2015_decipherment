@@ -1,11 +1,11 @@
 \section{Decipherment Model}
 In this section, we describe the decipherment model, upon which this work is built on. We first briefly introduce recent advances made in decipherment work, then describe the state-of-the-art approach, and in the end, bring up the problem that we address in this work. 
 
-Unsupervised learning of translations from non-parallel is an old and challenging problem. In recent years, there has been growing interests in approaching it using decipherment techniques. \newcite{ravi-knight:2011} built an MT system using only non parallel data for translating movie subtitles. \newcite{Dou:2012} and \newcite{Nuhn:2012} made decipherment scalable to handle larger vocabulary. \newcite{dou-knight:2013:EMNLP} improved decipherment accuracy significantly by using dependency information between words. 
+Unsupervised learning of translations from non-parallel is an old and challenging problem. In recent years, there has been growing interests in approaching it using decipherment techniques. \newcite{ravi-knight:2011} built an MT system using only non parallel data for translating movie subtitles. \newcite{Dou:2012} and \newcite{Nuhn:2012} made decipherment scalable to handle larger vocabulary. \newcite{dou-knight:2013:EMNLP} improved decipherment accuracy by using dependency relations between words. 
 
-Throughout this paper, we use $f$ to denote target language or ciphertext tokens, and $e$ to denote source language or plaintext tokens. Given ciphertext $\mathbf{\cipher}:f_{1}...f_{n}$, the task of decipherment is to find a set of parameters $P(f_{i}|e_{i})$ that convert $F$ to sensible plaintext. The ciphertext $F$ can either be full sentences \cite{ravi-knight:2011,Nuhn:2012} or simply bigrams \cite{dou-knight:2013:EMNLP}. Since using bigrams and their counts significantly speeds up decipherment, in this work, we also see observed the data as bigrams, where $ \mathbf{\cipher} = \{ \mathbf{\cipher}^n \}_{n=1}^{N} = \{ \cipher_1^n,\cipher_2^n \}_{n=1}^{N} $. 
+Throughout this paper, we use $f$ to denote target language or ciphertext tokens, and $e$ to denote source language or plaintext tokens. Given ciphertext $\mathbf{\cipher}:f_{1}...f_{n}$, the task of decipherment is to find a set of parameters $P(f_{i}|e_{i})$ that convert $F$ to sensible plaintext. The ciphertext $\mathbf{\cipher}$ can either be full sentences \cite{ravi-knight:2011,Nuhn:2012} or simply bigrams \cite{dou-knight:2013:EMNLP}. Since using bigrams and their counts speeds up decipherment, in this work, we treat $\mathbf{\cipher}$ as bigrams, where $ \mathbf{\cipher} = \{ \mathbf{\cipher}^n \}_{n=1}^{N} = \{ \cipher_1^n,\cipher_2^n \}_{n=1}^{N} $. 
 
-Motivated by the idea from \newcite{Weaver:1955}, we model a generate an observed bigram $\mathbf{\cipher}^n$ with the following generative story:
+Motivated by the idea from \newcite{Weaver:1955}, we model an observed cipher bigram $\mathbf{\cipher}^n$ with the following generative story:
 
 \begin{itemize}
 \item  First, a languae model $P(\mathbf{\plain})$ generates a sequence of two plaintext tokens $e_{1}^n,e_{2}^n$ with probability $P(e_{1}^n,e_{2}^n)$.
@@ -32,7 +32,7 @@ There are two sets of parameters in the model: the channel probabilities, \{ $P(
 %Unfortunately, EM is not scalable when $V_{f}$, $V_{e}$, and $N$ are very large.
 %$\cipher \in 1,\ldots,V_{\plain}$ and $\plain, \plain' \in 1,\ldots,V_e$
 
-An alternative approach to solve the problem is to apply Bayesian inference \cite{ravi-knight:2011,Dou:2012}. We assume that $P(\cipher \mid \plain)$ and $P(\plain' \mid \plain)$ are drawn from a Dirichet distribution with hyper-parameters $\alpha_{\cipher,\plain}$ and $\alpha_{\plain,\plain'}$, that is: 
+An alternative approach to solve the problem is Bayesian inference \cite{ravi-knight:2011,Dou:2012}. We assume that $P(\cipher \mid \plain)$ and $P(\plain' \mid \plain)$ are drawn from a Dirichet distribution with hyper-parameters $\alpha_{\cipher,\plain}$ and $\alpha_{\plain,\plain'}$, that is: 
 
 \begin{align*}
 P(\cipher \mid \plain) & \sim Dirichlet(\alpha_{\cipher,\plain}) \\ 
@@ -50,7 +50,7 @@ The remainder of the generative story is the same as the noisy channel model for
   &\prod_{\plain}  \frac{\dirgamma{\sum_{\plain'} \alpha_{\plain,\plain'}}} {\prod_{\plain'} \dirgamma{\alpha_{\plain,\plain'}}} \prod_{\cipher} P(\plain \mid \plain')^{\#(\plain,\plain')+\alpha_{\plain,\plain'} -1} , 
 \end{align}
 
-where $\#(\plain,\cipher)$ and $\#(\plain,\plain')$ are the counts of the translated word pairs and plaintext bigram pairs in the complete data, and $\dirgamma{\cdot}$ is the Gamma function. Unlike EM, in Bayeisan decipherment, we no longer search for parameters $P(\cipher \mid \plain)$ that maximize the likelihood of the observed ciphertext. Instead, we draw samples from posterior distribution of the plaintext sequences given the ciphertext. Under the above Bayesian decipherment model, we can show that the probability of a particular cipher word $\cipher_{j}$ having a value $k$, given the current plaintext word, and $\mathbf{\cipher}_{-j}$ and $\mathbf{\plain}_{-j}$, the samples for all the other plaintext and ciphertext words, 
+where $\#(\plain,\cipher)$ and $\#(\plain,\plain')$ are the counts of the translated word pairs and plaintext bigram pairs in the complete data, and $\dirgamma{\cdot}$ is the Gamma function. Unlike EM, in Bayeisan decipherment, we no longer search for parameters $P(\cipher \mid \plain)$ that maximize the likelihood of the observed ciphertext. Instead, we draw samples from posterior distribution of the plaintext sequences given the ciphertext. Under the above Bayesian decipherment model, it turns out  that the probability of a particular cipher word $\cipher_{j}$ having a value $k$, given the current plaintext word $\plain_j$, and  the samples for all the other ciphertext and plaintext words, $\mathbf{\cipher}_{-j}$ and $\mathbf{\plain}_{-j}$, is:
 
 \begin{equation} \label{prob_bayes_ciphertext}
 P(\cipher_j = k \mid \plain_j,\mathbf{\cipher}_{-j}, \mathbf{\plain}_{-j}) = \frac{\#(k, \plain_j)_{-j} + \alpha_{\plain_j,k}}{\#(\plain_j)_{-j}+\sum_{\cipher} \alpha_{\plain_j,\cipher}}.

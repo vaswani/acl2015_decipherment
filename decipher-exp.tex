@@ -32,7 +32,7 @@ We implement a baseline system based on the work described in \newcite{dou-knigh
 
 The baseline uses slice sampling with uniform base distribution during decipherment.
 
-We denote the system that uses our new method as \textbf{Decipher-Embedding}. The system is the same as the baseline except that it uses a base distribution derived from word context similarities.  
+We denote the system that uses our new method as \textbf{DMRE} (Dirichlet Multinomial Regression). The system is the same as the baseline except that it uses a base distribution derived from word context similarities.  
 
 For all the systems, language models are built using the SRILM toolkit \cite{srilm}. We use modified Kneyser-Ney \cite{KneserNey95} algorithm for smoothing.
 
@@ -57,14 +57,12 @@ Motivated by the previous work, we use multiple random restarts and iterative sa
   \item Repeat until $t=1$.
 \end{itemize}
 
-In our Spanish-English decipherment experiments, we use 10 different random restarts. 
-
-In experiments, we also gradually increase the weight of base distribution as more and more ciphtertext becomes available. We set the weight to 2, 4, and 6 for ciphertext with 100k, 1 million, and 10 million tokens respectively. 
+In our Spanish-English decipherment experiments, we use 10 different random restarts. In experiments, we also gradually increase the weight of base distribution as more and more ciphtertext becomes available. We set the weight to 2, 10, and 50 for ciphertext with 100k, 1 million, and 10 million tokens respectively. 
 
 \subsection{Evaluation Metrics}
-We use type accuracy as our evaluation metric: Given a word type $f$ in Spanish, we find top K translation pairs $(f,e)$ ranked by $P(e|f)$ from the translation table learned through decipherment. If the translation pair $(f,e)$ can also be found in a gold translation lexicon $T_{gold}$, we treat the word type $f$ as correctly deciphered. Let $|C|$ be the number of word types correctly deciphered, and $|V|$ be the total number of word types evaluated. We define type accuracy as $\frac{|C|}{|V|}$.
+We use type accuracy as our evaluation metric: Given a word type $f$ in Spanish, we find top 5 translation pairs $(f,e)$ ranked by $P(e|f)$ from the translation table learned through decipherment. If the translation pair $(f,e)$ can also be found in a gold translation lexicon $T_{gold}$, we treat the word type $f$ as correctly deciphered. Let $|C|$ be the number of word types correctly deciphered, and $|V|$ be the total number of word types evaluated. We define type accuracy as $\frac{|C|}{|V|}$.
 
-To create $T_{gold}$, we use GIZA to align a small amount of Spanish-English parallel text (1 million tokens for each language), and use the lexicon derived from the alignment as our gold translation lexicon. $T_{gold}$ contains a subset of 4233 word types in the top 5000 frequent word types, and 7479 word types in the top 10k frequent word types. We decipher top 10k frequent Spanish word types to top 10k frequent English word types, and evaluate decipherment accuracy for both top 5k frequent word types and all the 10k word types.
+To create $T_{gold}$, we use GIZA to align a small amount of Spanish-English parallel text (1 million tokens for each language), and use the lexicon derived from the alignment as our gold translation lexicon. $T_{gold}$ contains a subset of 4233 word types in the top 5000 frequent word types, and 7479 word types in the top 10k frequent word types. We decipher top 10k frequent Spanish word types to top 10k frequent English word types, and evaluate decipherment accuracy on both top 5k most frequent word types and all the 10k word types.
 
 \section{Deciphering Malagasy}
 \label{decipher_malagasy}
@@ -120,7 +118,7 @@ Noun & Noun \\ \hline
 %
 
 \subsection{Sampling Procedure}
-We use the same sampling protocol designed for Spanish-English decipherment. However, in experiments, we find out that simply using viterbi decoding to initialize the first sample does not work as well as in deciphering Spanish. Therefore, in addition to using Viterbi decoding, we also initialize the base distribution to the base distribution of previous decipherment run that produces highest decipherment accuracy.
+We use the same sampling protocol designed for Spanish-English decipherment. However, in experiments, we find out that simply using viterbi decoding to initialize the first sample does not work as well as in deciphering Spanish. Therefore, in addition to using Viterbi decoding, we also initialize the base distribution to the base distribution of previous decipherment that produces highest decipherment accuracy.
 
 Compared with Spanish-English decipherment, we find the base distribution plays a more important role in achieving higher decipherment accuracy for Malagasy-English. Therefore, we set weight to 10, 100, and 500 when deciphering 100k, 1 million, and 20 million ciphtertext respectively.
 
@@ -131,10 +129,10 @@ Compared with Spanish-English decipherment, we find the base distribution plays 
  \begin{tabular}{ |c|c|c|c|c|c|c|c|c| } \hline
          & \multicolumn{4}{|c|}{Spanish-English} & \multicolumn{4}{|c|}{Malagasy-English} \\ \hline
  Top &  \multicolumn{2}{|c|}{5k} & \multicolumn{2}{|c|}{10k} & \multicolumn{2}{|c|}{5k} & \multicolumn{2}{|c|}{10k} \\ \hline
- System &  Baseline & Embed & Baseline & Embed &  Baseline & Embed & Baseline & Embed \\ \hline
+ System &  Baseline & DMRE & Baseline & DMRE &  Baseline & DMRE & Baseline & DMRE \\ \hline
  100k &  1.9 & 12.4 & 1.1 & 7.1 &  1.2 & 2.7 & 0.6 & 1.4 \\ \hline
  1 million &  7.3 & 37.7& 4.2 & 23.6 &  2.5 & 5.8 & 1.3 & 3.2 \\ \hline
- 10 million &  (23.4) & (55.3) & (12.1) & (37.4) &  5.4 & (12.1) & 3.0 & (7.2) \\ \hline
+ 10 million &  26.0 & 59.0 & 15.9 & 43.7 &  5.4 & (12.1) & 3.0 & (7.2) \\ \hline
  \end{tabular}
  \caption{Spanish-English and Malagasy-English decipherment accuracy (\%) of top 5k and 10k most frequent word types}
  \label{decipher-acc-result}
@@ -143,7 +141,7 @@ Compared with Spanish-English decipherment, we find the base distribution plays 
 %
 
 \subsection{Results}
-In experiments, we gradually increase the size of ciphertext and compare decipherment accuracy of baseline with our new approach. We evaluate top 5 accuracy for top 5k and 10k most frequent word types for each language pair, and present them in Table \ref{decipher-acc-result}; 
+In experiments, we gradually increase the size of ciphertext and compare decipherment accuracy of baseline with our new approach. We evaluate accuracy for top 5k and 10k most frequent word types for each language pair, and present them in Table \ref{decipher-acc-result}; 
 
 
  \begin{figure}[!ht]
@@ -153,7 +151,7 @@ In experiments, we gradually increase the size of ciphertext and compare deciphe
 \label{es-en-curve}
 \end{figure}
 
-Figure \ref{es-en-curve} compares baseline with our new approach in deciphering Spanish into English. With 100k tokens of Spanish text, the baseline achieves 1.9\% accuracy, while the new system achieves 12.4\% accuracy, which improves the baseline by over 6 times. The improvement holds consistently throughout the experiment. In the end, the baseline achieves 22\% accuracy, while the new system achieves 60\% accuracy, nearly 3 folds higher. 
+To better visualize the improvement, we also present the learning curves of decipherment accuracy for top 5k most frequent word types. Figure \ref{es-en-curve} compares baseline with our new approach in deciphering Spanish into English. With 100k tokens of Spanish text, the baseline achieves 1.9\% accuracy, while the new system achieves 12.4\% accuracy, which improves the baseline by over 6 times. The improvement holds consistently throughout the experiment. In the end, the baseline achieves 22\% accuracy, while the new system achieves 60\% accuracy, nearly 3 folds higher. 
 
  \begin{figure}[!ht]
   \centering
@@ -163,7 +161,11 @@ Figure \ref{es-en-curve} compares baseline with our new approach in deciphering 
 \end{figure}
 
 
-Figure \ref{mlg-en-curve} compares baseline with our new approach in deciphering Malagasy into English. With 100k tokens of Malagasy data, the baseline achieves 1.2\% accuracy, while the new system achieves 2.4\% The improvement also holds consistently throughout the experiment. In the end, the baseline achieves 5.8\% accuracy, while the new system achieves 12.0\% accuracy, more than 2 times higher. 
+Figure \ref{mlg-en-curve} compares baseline with our new approach in deciphering Malagasy into English. With 100k tokens of data, the baseline achieves 1.2\% accuracy, while the new system achieves 2.4\% accuracy.  We observe consistent improvement throughout the experiment. In the end, the baseline accuracy climbs to 5.8\%, while the new system improves it to 12.0\%.
+
+Overall, the improvement we achieved is solid, and is observed across different language pairs. When we exam the base distribution, we find that the correct translations have higher probability. This helps prevent the language model driving deicpherment to a wrong direction. 
+
+ 
 
 
 
